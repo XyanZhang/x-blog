@@ -1,0 +1,51 @@
+@layer tailwind-base , antd;
+
+@layer tailwind-base {
+    @tailwind base;
+}
+
+@layer base {
+    /* 这个全局标签通用边框样式是从shadcn/ui写入src/app/globals.css中的样式复制而来的 */
+    * {
+        /* 注意,shadcn/ui生成该样式时,因为还没有在`components.json`中加上`tw-`前缀,所以该样式是不带有tw-前缀的.请自行加上tw-前缀 */
+        @apply tw-border-border;
+    }
+
+    /* 以下为自定义样式 */
+    html,
+    body {
+        @apply tw-h-[100vh] tw-w-full tw-p-0 tw-m-0;
+    }
+
+    html {
+        font-family: var(--font-family-standard);
+    }
+
+    body {
+        font-size: var(--font-size-base);
+    }
+
+    h1 {
+        @apply tw-text-3xl;
+    }
+
+    h2 {
+        @apply tw-text-2xl;
+    }
+
+    h3 {
+        @apply tw-text-xl;
+    }
+
+    h4 {
+        @apply tw-text-lg;
+    }
+
+    h5 {
+        @apply tw-text-sm;
+    }
+
+    h6 {
+        @apply tw-text-xs;
+    }
+}

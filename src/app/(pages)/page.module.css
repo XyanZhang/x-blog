@@ -1,0 +1,7 @@
+/* src/app/(pages)/page.module.css */
+.block {
+  @apply tw-flex tw-flex-col !tw-flex-none tw-w-full tw-space-y-4 tw-p-5 tw-items-center tw-justify-center 
+     tw-rounded-sm tw-backdrop-blur-sm tw-shadow-nysm tw-shadow-neutral-800 tw-duration-300
+     tw-text-lg  tw-text-center  tw-text-white tw-bg-black/30 
+     hover:tw-shadow-nylg;
+}
