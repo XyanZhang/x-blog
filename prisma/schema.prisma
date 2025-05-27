@@ -1,4 +1,4 @@
-// This is your Prisma schema file,
+// This is your Prisma schema file for Markdown Blog System
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -7,39 +7,307 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./test.db"
+  url      = "file:./blog.db"
 }
 
+// 用户模型
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String
-  email     String
-  createdAt DateTime @default(now()) @map("created_at")
-  orders    Order[]
+  id          String   @id @default(cuid())
+  username    String   @unique
+  email       String   @unique
+  password    String   // 存储哈希密码
+  displayName String?  // 显示名称
+  avatar      String?  // 头像URL
+  bio         String?  // 个人简介
+  website     String?  // 个人网站
+  github      String?  // GitHub链接
+  twitter     String?  // Twitter链接
+  role        Role     @default(USER)
+  isActive    Boolean  @default(true)
+  isVerified  Boolean  @default(false)
+  lastLoginAt DateTime?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // 关联关系
+  posts       Post[]
+  comments    Comment[]
+  likes       PostLike[]
+  bookmarks   PostBookmark[]
+  follows     Follow[] @relation("Follower")
+  followers   Follow[] @relation("Following")
+  media       Media[]
 
   @@map("users")
 }
 
-model Product {
-  id          Int      @id @default(autoincrement())
-  name        String
-  price       Float
-  description String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  orders      Order[]
-
-  @@map("products")
+// 用户角色枚举
+enum Role {
+  SUPER_ADMIN // 超级管理员
+  ADMIN       // 管理员  
+  EDITOR      // 编辑
+  USER        // 普通用户
 }
 
-model Order {
-  id         Int      @id @default(autoincrement())
-  userId     Int      @map("user_id")
-  productId  Int      @map("product_id")
-  quantity   Int
-  totalPrice Float    @map("total_price")
-  orderDate  DateTime @default(now()) @map("order_date")
-  user       User     @relation(fields: [userId], references: [id])
-  product    Product  @relation(fields: [productId], references: [id])
+// 文章模型
+model Post {
+  id             String      @id @default(cuid())
+  title          String      // 文章标题
+  slug           String      @unique // URL友好的标识符
+  excerpt        String?     // 摘要
+  content        String      // Markdown内容
+  htmlContent    String?     // 渲染后的HTML内容（可缓存）
+  coverImage     String?     // 封面图片
+  isPublished    Boolean     @default(false)
+  isDraft        Boolean     @default(true)
+  isDeleted      Boolean     @default(false)
+  publishedAt    DateTime?   // 发布时间
+  scheduledAt    DateTime?   // 定时发布时间
+  viewCount      Int         @default(0) // 浏览次数
+  likeCount      Int         @default(0) // 点赞数
+  commentCount   Int         @default(0) // 评论数
+  bookmarkCount  Int         @default(0) // 收藏数
+  readingTime    Int?        // 预估阅读时间（分钟）
+  
+  // SEO相关
+  metaTitle      String?     // SEO标题
+  metaDescription String?    // SEO描述
+  metaKeywords   String?     // SEO关键词
+  
+  // 作者信息
+  authorId       String      @map("author_id")
+  author         User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  // 分类
+  categoryId     String?     @map("category_id")
+  category       Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  
+  // 时间戳
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+  deletedAt      DateTime?   @map("deleted_at")
 
-  @@map("orders")
+  // 关联关系
+  tags           PostTag[]
+  comments       Comment[]
+  likes          PostLike[]
+  bookmarks      PostBookmark[]
+  analytics      Analytics[]
+  
+  @@map("posts")
+  @@index([slug])
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([isPublished, publishedAt])
+}
+
+// 分类模型
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  color       String?  // 分类颜色
+  icon        String?  // 分类图标
+  sortOrder   Int      @default(0) // 排序
+  isActive    Boolean  @default(true)
+  postCount   Int      @default(0) // 文章数量
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // 关联关系
+  posts       Post[]
+
+  @@map("categories")
+}
+
+// 标签模型
+model Tag {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  color       String?  // 标签颜色
+  postCount   Int      @default(0) // 使用次数
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // 关联关系
+  posts       PostTag[]
+
+  @@map("tags")
+}
+
+// 文章标签关联表
+model PostTag {
+  id     String @id @default(cuid())
+  postId String @map("post_id")
+  tagId  String @map("tag_id")
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, tagId])
+  @@map("post_tags")
+}
+
+// 评论模型
+model Comment {
+  id          String    @id @default(cuid())
+  content     String    // 评论内容
+  isApproved  Boolean   @default(false) // 是否审核通过
+  isDeleted   Boolean   @default(false)
+  ipAddress   String?   // IP地址
+  userAgent   String?   // 用户代理
+  
+  // 文章关联
+  postId      String    @map("post_id")
+  post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  // 用户关联（可为空，支持匿名评论）
+  authorId    String?   @map("author_id")
+  author      User?     @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  
+  // 匿名用户信息
+  guestName   String?   // 游客姓名
+  guestEmail  String?   // 游客邮箱
+  guestWebsite String?  // 游客网站
+  
+  // 回复关联（自关联）
+  parentId    String?   @map("parent_id")
+  parent      Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     Comment[] @relation("CommentReplies")
+  
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  @@map("comments")
+  @@index([postId])
+  @@index([authorId])
+  @@index([parentId])
+}
+
+// 文章点赞模型
+model PostLike {
+  id     String @id @default(cuid())
+  postId String @map("post_id")
+  userId String @map("user_id")
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([postId, userId])
+  @@map("post_likes")
+}
+
+// 文章收藏模型
+model PostBookmark {
+  id     String @id @default(cuid())
+  postId String @map("post_id")
+  userId String @map("user_id")
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([postId, userId])
+  @@map("post_bookmarks")
+}
+
+// 用户关注模型
+model Follow {
+  id          String @id @default(cuid())
+  followerId  String @map("follower_id")
+  followingId String @map("following_id")
+  follower    User   @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User   @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+// 媒体文件模型
+model Media {
+  id          String   @id @default(cuid())
+  filename    String   // 文件名
+  originalName String  @map("original_name") // 原始文件名
+  mimeType    String   @map("mime_type") // MIME类型
+  size        Int      // 文件大小（字节）
+  url         String   // 文件URL
+  thumbnailUrl String? @map("thumbnail_url") // 缩略图URL
+  alt         String?  // 替代文本
+  caption     String?  // 图片说明
+  width       Int?     // 图片宽度
+  height      Int?     // 图片高度
+  
+  // 上传用户
+  uploaderId  String?  @map("uploader_id")
+  uploader    User?    @relation(fields: [uploaderId], references: [id], onDelete: SetNull)
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("media")
+}
+
+// 系统设置模型
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique // 设置键
+  value String // 设置值（JSON字符串）
+  type  String @default("string") // 值类型：string, number, boolean, json
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
+
+// 页面模型（用于静态页面如关于我们、联系我们等）
+model Page {
+  id          String   @id @default(cuid())
+  title       String   // 页面标题
+  slug        String   @unique // URL标识符
+  content     String   // Markdown内容
+  htmlContent String?  // 渲染后的HTML
+  isPublished Boolean  @default(false)
+  sortOrder   Int      @default(0) // 排序
+  
+  // SEO
+  metaTitle   String?
+  metaDescription String?
+  metaKeywords String?
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("pages")
+}
+
+// 访问统计模型
+model Analytics {
+  id        String   @id @default(cuid())
+  path      String   // 访问路径
+  referer   String?  // 来源页面
+  userAgent String?  // 用户代理
+  ipAddress String?  // IP地址
+  country   String?  // 国家
+  city      String?  // 城市
+  device    String?  // 设备类型
+  browser   String?  // 浏览器
+  
+  // 关联文章（可选）
+  postId    String?  @map("post_id")
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: SetNull)
+  
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("analytics")
+  @@index([path])
+  @@index([postId])
+  @@index([createdAt])
 }
