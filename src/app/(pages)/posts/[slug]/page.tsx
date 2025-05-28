@@ -119,7 +119,7 @@ const PostDetailPage: FC<PostDetailPageProps> = async ({ params }) => {
           {post.category && (
             <div className="mb-4">
               <Link
-                href={`/category/${post.category.slug}`}
+                href={`/categories/${post.category.slug}`}
                 className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-white"
                 style={{ backgroundColor: post.category.color || '#6b7280' }}
               >

@@ -47,6 +47,7 @@ const HomePage: FC = async () => {
             <div className="hidden md:flex items-center space-x-8">
               <Link href="/" className="text-gray-700 hover:text-blue-600">首页</Link>
               <Link href="/posts" className="text-gray-700 hover:text-blue-600">文章</Link>
+              <Link href="/categories" className="text-gray-700 hover:text-blue-600">分类</Link>
               <Link href="/about" className="text-gray-700 hover:text-blue-600">关于</Link>
             </div>
           </div>
@@ -236,7 +237,16 @@ const HomePage: FC = async () => {
       {/* 分类展示 */}
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">文章分类</h2>
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900">文章分类</h2>
+            <Link 
+              href="/categories"
+              className="text-blue-600 hover:text-blue-700 font-medium flex items-center"
+            >
+              查看全部
+              <ArrowRight className="ml-1 h-4 w-4" />
+            </Link>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {categories.map((category) => (
               <Link 

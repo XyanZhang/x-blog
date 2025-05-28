@@ -300,4 +300,118 @@ export async function incrementPostViews(postId: string) {
   } catch (error) {
     console.error('Failed to increment post views:', error)
   }
+}
+
+// 根据分类slug获取分类信息
+export async function getCategoryBySlug(slug: string) {
+  return await prisma.category.findUnique({
+    where: {
+      slug: slug,
+      isActive: true
+    },
+    include: {
+      _count: {
+        select: {
+          posts: {
+            where: {
+              isPublished: true,
+              isDeleted: false
+            }
+          }
+        }
+      }
+    }
+  })
+}
+
+// 根据分类获取文章列表
+export async function getPostsByCategory(categorySlug: string, page: number = 1, limit: number = 10) {
+  const offset = (page - 1) * limit
+
+  // 先获取分类信息
+  const category = await getCategoryBySlug(categorySlug)
+  if (!category) {
+    return { posts: [], category: null, totalCount: 0, totalPages: 0 }
+  }
+
+  // 获取文章总数
+  const totalCount = await prisma.post.count({
+    where: {
+      categoryId: category.id,
+      isPublished: true,
+      isDeleted: false
+    }
+  })
+
+  // 获取分页文章
+  const posts = await prisma.post.findMany({
+    where: {
+      categoryId: category.id,
+      isPublished: true,
+      isDeleted: false
+    },
+    include: {
+      author: {
+        select: {
+          id: true,
+          displayName: true,
+          avatar: true
+        }
+      },
+      category: {
+        select: {
+          id: true,
+          name: true,
+          color: true,
+          icon: true,
+          slug: true
+        }
+      },
+      _count: {
+        select: {
+          likes: true,
+          comments: true
+        }
+      }
+    },
+    orderBy: {
+      publishedAt: 'desc'
+    },
+    skip: offset,
+    take: limit
+  })
+
+  const totalPages = Math.ceil(totalCount / limit)
+
+  return {
+    posts,
+    category,
+    totalCount,
+    totalPages
+  }
+}
+
+// 获取所有分类及其统计信息（用于分类列表页）
+export async function getCategoriesWithStats() {
+  return await prisma.category.findMany({
+    where: {
+      isActive: true
+    },
+    include: {
+      _count: {
+        select: {
+          posts: {
+            where: {
+              isPublished: true,
+              isDeleted: false
+            }
+          }
+        }
+      }
+    },
+    orderBy: [
+      { sortOrder: 'asc' },
+      { postCount: 'desc' }
+    ]
+  })
 } 

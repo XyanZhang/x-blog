@@ -84,7 +84,7 @@ const PostsPage: FC = async () => {
                   {categories.map((category) => (
                     <Link
                       key={category.id}
-                      href={`/category/${category.slug}`}
+                      href={`/categories/${category.slug}`}
                       className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                     >
                       <div className="flex items-center justify-between">
@@ -167,7 +167,7 @@ const PostsPage: FC = async () => {
                         {post.category && (
                           <div className="mb-3">
                             <Link
-                              href={`/category/${post.category.name.toLowerCase()}`}
+                              href={`/categories/${post.category.slug}`}
                               className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-white"
                               style={{ backgroundColor: post.category.color || '#6b7280' }}
                             >

@@ -54,4 +54,25 @@ export interface HomePageData {
   recentPosts: PostWithDetails[]
   categories: CategoryWithCount[]
   stats: BlogStats
+}
+
+// 分类页面数据类型
+export interface CategoryPageData {
+  posts: PostWithDetails[]
+  category: CategoryWithCount | null
+  totalCount: number
+  totalPages: number
+}
+
+// 分类详情类型（用于分类页面）
+export type CategoryDetail = Category & {
+  _count: {
+    posts: number
+  }
+}
+
+// 分类列表数据类型
+export interface CategoriesPageData {
+  categories: CategoryWithCount[]
+  totalPosts: number
 } 
