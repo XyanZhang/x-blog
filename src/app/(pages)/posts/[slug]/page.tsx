@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Metadata } from 'next'
@@ -6,6 +6,8 @@ import { Calendar, Eye, Heart, MessageCircle, Bookmark, User, Globe, Github, Twi
 
 import { getPostBySlug, getRelatedPosts, incrementPostViews } from '@/lib/db'
 import type { PostDetail } from '@/types/blog'
+import MarkdownRenderer from '@/components/MarkdownRenderer'
+import TableOfContents from '@/components/TableOfContents'
 
 interface PostDetailPageProps {
   params: Promise<{
@@ -231,10 +233,10 @@ const PostDetailPage: FC<PostDetailPageProps> = async ({ params }) => {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* 主要内容 */}
-          <main className="lg:col-span-2">
+      <div className="relative">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          {/* 主要内容 - 占据完整宽度 */}
+          <main>
             {/* 封面图片 */}
             {post.coverImage && (
               <div className="mb-8">
@@ -248,9 +250,9 @@ const PostDetailPage: FC<PostDetailPageProps> = async ({ params }) => {
 
             {/* 文章内容 */}
             <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
-              <div 
-                className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 prose-code:text-pink-600 prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-gray-900 prose-pre:text-gray-100"
-                dangerouslySetInnerHTML={{ __html: post.htmlContent || post.content }}
+              <MarkdownRenderer 
+                content={post.content}
+                className="prose prose-lg max-w-none"
               />
             </div>
 
@@ -365,9 +367,11 @@ const PostDetailPage: FC<PostDetailPageProps> = async ({ params }) => {
               )}
             </div>
           </main>
+        </div>
 
-          {/* 侧边栏 */}
-          <aside className="space-y-6">
+        {/* 侧边栏 - 位于容器外部右侧，sticky定位 */}
+        <aside className="hidden xl:block fixed right-4 top-20 w-72 max-h-[calc(100vh-5rem)] overflow-y-auto">
+          <div className="space-y-6">
             {/* 相关文章 */}
             {relatedPosts.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm p-6">
@@ -409,14 +413,9 @@ const PostDetailPage: FC<PostDetailPageProps> = async ({ params }) => {
             )}
 
             {/* 目录 */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">文章目录</h3>
-              <div className="text-sm text-gray-600">
-                <p>目录功能开发中...</p>
-              </div>
-            </div>
-          </aside>
-        </div>
+            <TableOfContents content={post.content} />
+          </div>
+        </aside>
       </div>
     </article>
   )
