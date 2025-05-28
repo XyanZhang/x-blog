@@ -16,6 +16,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset --force && pnpm db:seed",
     "db:query": "tsx scripts/db-query.ts",
+    "db:import-docs": "tsx scripts/import-docs.ts",
     "------------------ ui command": "----",
     "addsc": "pnpm dlx shadcn@latest add"
   },
@@ -48,6 +49,7 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.16",
+    "@types/bcryptjs": "^3.0.0",
     "@types/lodash": "^4.17.16",
     "@types/node": "^20",
     "@types/react": "^19",
