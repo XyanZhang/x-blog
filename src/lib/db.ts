@@ -151,4 +151,153 @@ export function formatNumber(num: number): string {
     return (num / 1000).toFixed(1) + 'K'
   }
   return num.toString()
+}
+
+// 获取文章详情
+export async function getPostBySlug(slug: string) {
+  return await prisma.post.findUnique({
+    where: {
+      slug: slug,
+      isPublished: true,
+      isDeleted: false
+    },
+    include: {
+      author: {
+        select: {
+          id: true,
+          displayName: true,
+          avatar: true,
+          bio: true,
+          website: true,
+          github: true,
+          twitter: true
+        }
+      },
+      category: {
+        select: {
+          id: true,
+          name: true,
+          color: true,
+          icon: true,
+          slug: true
+        }
+      },
+      tags: {
+        include: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              color: true
+            }
+          }
+        }
+      },
+      comments: {
+        where: {
+          isApproved: true,
+          parentId: null // 只获取顶级评论
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              displayName: true,
+              avatar: true
+            }
+          },
+          replies: {
+            where: {
+              isApproved: true
+            },
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  displayName: true,
+                  avatar: true
+                }
+              }
+            },
+            orderBy: {
+              createdAt: 'asc'
+            }
+          }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      },
+      _count: {
+        select: {
+          likes: true,
+          comments: true,
+          bookmarks: true
+        }
+      }
+    }
+  })
+}
+
+// 获取相关文章
+export async function getRelatedPosts(currentPostId: string, categoryId: string | null, limit: number = 3) {
+  const where: any = {
+    id: {
+      not: currentPostId
+    },
+    isPublished: true,
+    isDeleted: false
+  }
+
+  if (categoryId) {
+    where.categoryId = categoryId
+  }
+
+  return await prisma.post.findMany({
+    where,
+    include: {
+      author: {
+        select: {
+          id: true,
+          displayName: true,
+          avatar: true
+        }
+      },
+      category: {
+        select: {
+          id: true,
+          name: true,
+          color: true,
+          icon: true
+        }
+      },
+      _count: {
+        select: {
+          likes: true,
+          comments: true
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    },
+    take: limit
+  })
+}
+
+// 增加文章浏览量
+export async function incrementPostViews(postId: string) {
+  try {
+    await prisma.post.update({
+      where: { id: postId },
+      data: {
+        viewCount: {
+          increment: 1
+        }
+      }
+    })
+  } catch (error) {
+    console.error('Failed to increment post views:', error)
+  }
 } 

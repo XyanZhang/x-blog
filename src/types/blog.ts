@@ -1,4 +1,4 @@
-import { Post, User, Category, Comment, PostLike } from '@prisma/client'
+import { Post, User, Category, Comment, PostLike, Tag, PostTag } from '@prisma/client'
 
 // 扩展的文章类型
 export type PostWithDetails = Post & {
@@ -8,6 +8,29 @@ export type PostWithDetails = Post & {
     likes: number
     comments: number
   }
+}
+
+// 博客详情页面的文章类型
+export type PostDetail = Post & {
+  author: Pick<User, 'id' | 'displayName' | 'avatar' | 'bio' | 'website' | 'github' | 'twitter'>
+  category: Pick<Category, 'id' | 'name' | 'color' | 'icon' | 'slug'> | null
+  tags: Array<{
+    tag: Pick<Tag, 'id' | 'name' | 'slug' | 'color'>
+  }>
+  comments: Array<CommentWithReplies>
+  _count: {
+    likes: number
+    comments: number
+    bookmarks: number
+  }
+}
+
+// 评论类型（包含回复）
+export type CommentWithReplies = Comment & {
+  author: Pick<User, 'id' | 'displayName' | 'avatar'>
+  replies: Array<Comment & {
+    author: Pick<User, 'id' | 'displayName' | 'avatar'>
+  }>
 }
 
 // 扩展的分类类型
