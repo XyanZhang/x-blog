@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const AppLayout: FC<PropsWithChildren> = ({ children }) => (
     <div className="min-h-screen bg-gray-50">
-        <Header />
+        {/* <Header /> */}
         {children}
     </div>
 );
