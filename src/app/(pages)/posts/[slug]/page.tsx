@@ -15,7 +15,26 @@ interface PostDetailPageProps {
   }>
 }
 
-// 获取文章数据
+// 获取文章数据（不增加浏览量）
+async function getPostDataForMeta(slug: string) {
+  const post = await getPostBySlug(slug)
+  
+  if (!post) {
+    return null
+  }
+
+  // 获取相关文章
+  const relatedPosts = await getRelatedPosts(post.id, post.categoryId, 3)
+
+  // 注意：这里不增加浏览量
+
+  return {
+    post: post as PostDetail,
+    relatedPosts
+  }
+}
+
+// 获取文章数据（增加浏览量）
 async function getPostData(slug: string) {
   const post = await getPostBySlug(slug)
   
@@ -38,7 +57,7 @@ async function getPostData(slug: string) {
 // 生成SEO元数据
 export async function generateMetadata({ params }: PostDetailPageProps): Promise<Metadata> {
   const { slug } = await params
-  const data = await getPostData(slug)
+  const data = await getPostDataForMeta(slug)  // 使用不增加浏览量的版本
   
   if (!data) {
     return {
