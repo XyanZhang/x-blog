@@ -1,17 +1,52 @@
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 
-import './styles/index.css';
+import './globals.css';
 
 import type { FC, PropsWithChildren } from 'react';
 
+const inter = Inter({ subsets: ['latin'] });
+
 export const metadata: Metadata = {
-    title: 'nextapp',
-    description: 'Next.js全栈开发课程',
+    title: {
+        default: '我的博客',
+        template: '%s | 我的博客'
+    },
+    description: '分享技术知识，记录生活点滴的个人博客',
+    keywords: ['博客', '技术', '编程', 'Next.js', 'React', 'TypeScript'],
+    authors: [{ name: '博客管理员' }],
+    creator: '博客管理员',
+    openGraph: {
+        type: 'website',
+        locale: 'zh_CN',
+        url: 'https://yourblog.com',
+        title: '我的博客',
+        description: '分享技术知识，记录生活点滴的个人博客',
+        siteName: '我的博客',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: '我的博客',
+        description: '分享技术知识，记录生活点滴的个人博客',
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            'max-video-preview': -1,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+        },
+    },
 };
 
 const RootLayout: FC<PropsWithChildren> = ({ children }) => (
-    <html lang="en">
-        <body>{children}</body>
+    <html lang="zh-CN" suppressHydrationWarning>
+        <body className={inter.className} suppressHydrationWarning>
+            {children}
+        </body>
     </html>
 );
 
