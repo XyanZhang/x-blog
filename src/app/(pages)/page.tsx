@@ -48,6 +48,7 @@ const HomePage: FC = async () => {
               <Link href="/" className="text-gray-700 hover:text-blue-600">首页</Link>
               <Link href="/posts" className="text-gray-700 hover:text-blue-600">文章</Link>
               <Link href="/categories" className="text-gray-700 hover:text-blue-600">分类</Link>
+              <Link href="/tags" className="text-gray-700 hover:text-blue-600">标签</Link>
               <Link href="/about" className="text-gray-700 hover:text-blue-600">关于</Link>
             </div>
           </div>

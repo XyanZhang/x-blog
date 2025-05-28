@@ -75,4 +75,25 @@ export type CategoryDetail = Category & {
 export interface CategoriesPageData {
   categories: CategoryWithCount[]
   totalPosts: number
+}
+
+// 扩展的标签类型
+export type TagWithCount = Tag & {
+  _count: {
+    posts: number
+  }
+}
+
+// 标签页面数据类型
+export interface TagPageData {
+  posts: PostWithDetails[]
+  tag: TagWithCount | null
+  totalCount: number
+  totalPages: number
+}
+
+// 标签列表数据类型
+export interface TagsPageData {
+  tags: TagWithCount[]
+  totalPosts: number
 } 

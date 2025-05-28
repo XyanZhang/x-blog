@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { Metadata } from 'next'
 import { Calendar, Eye, Heart, MessageCircle, Search, Filter } from 'lucide-react'
 
-import { getRecentPosts, getCategories } from '@/lib/db'
-import type { PostWithDetails, CategoryWithCount } from '@/types/blog'
+import { getRecentPosts, getCategories, getPopularTags } from '@/lib/db'
+import type { PostWithDetails, CategoryWithCount, TagWithCount } from '@/types/blog'
 
 export const metadata: Metadata = {
   title: '所有文章 - 我的博客',
@@ -13,14 +13,16 @@ export const metadata: Metadata = {
 
 // 获取页面数据
 async function getPostsPageData() {
-  const [posts, categories] = await Promise.all([
+  const [posts, categories, tags] = await Promise.all([
     getRecentPosts(20), // 获取更多文章
-    getCategories()
+    getCategories(),
+    getPopularTags(12) // 获取热门标签
   ])
 
   return {
     posts,
-    categories
+    categories,
+    tags
   }
 }
 
@@ -34,7 +36,7 @@ function formatDate(date: Date): string {
 }
 
 const PostsPage: FC = async () => {
-  const { posts, categories } = await getPostsPageData()
+  const { posts, categories, tags } = await getPostsPageData()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -103,13 +105,13 @@ const PostsPage: FC = async () => {
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">热门标签</h3>
                 <div className="flex flex-wrap gap-2">
-                  {['React', 'Next.js', 'TypeScript', 'JavaScript', 'CSS', 'Node.js', 'Python', 'Git'].map((tag) => (
+                  {tags.map((tag) => (
                     <Link
-                      key={tag}
-                      href={`/tag/${tag.toLowerCase()}`}
+                      key={tag.id}
+                      href={`/tags/${tag.slug}`}
                       className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors"
                     >
-                      #{tag}
+                      #{tag.name}
                     </Link>
                   ))}
                 </div>

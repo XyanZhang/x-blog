@@ -262,7 +262,7 @@ const PostDetailPage: FC<PostDetailPageProps> = async ({ params }) => {
                   {post.tags.map(({ tag }) => (
                     <Link
                       key={tag.id}
-                      href={`/tag/${tag.slug}`}
+                      href={`/tags/${tag.slug}`}
                       className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors"
                       style={{ backgroundColor: tag.color ? `${tag.color}20` : undefined }}
                     >

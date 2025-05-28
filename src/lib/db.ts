@@ -414,4 +414,149 @@ export async function getCategoriesWithStats() {
       { postCount: 'desc' }
     ]
   })
+}
+
+// 根据标签slug获取标签信息
+export async function getTagBySlug(slug: string) {
+  return await prisma.tag.findUnique({
+    where: {
+      slug: slug,
+      isActive: true
+    },
+    include: {
+      _count: {
+        select: {
+          posts: {
+            where: {
+              post: {
+                isPublished: true,
+                isDeleted: false
+              }
+            }
+          }
+        }
+      }
+    }
+  })
+}
+
+// 根据标签获取文章列表
+export async function getPostsByTag(tagSlug: string, page: number = 1, limit: number = 10) {
+  const offset = (page - 1) * limit
+
+  // 先获取标签信息
+  const tag = await getTagBySlug(tagSlug)
+  if (!tag) {
+    return { posts: [], tag: null, totalCount: 0, totalPages: 0 }
+  }
+
+  // 获取文章总数
+  const totalCount = await prisma.postTag.count({
+    where: {
+      tagId: tag.id,
+      post: {
+        isPublished: true,
+        isDeleted: false
+      }
+    }
+  })
+
+  // 获取分页文章
+  const postTags = await prisma.postTag.findMany({
+    where: {
+      tagId: tag.id,
+      post: {
+        isPublished: true,
+        isDeleted: false
+      }
+    },
+    include: {
+      post: {
+        include: {
+          author: {
+            select: {
+              id: true,
+              displayName: true,
+              avatar: true
+            }
+          },
+          category: {
+            select: {
+              id: true,
+              name: true,
+              color: true,
+              icon: true,
+              slug: true
+            }
+          },
+          _count: {
+            select: {
+              likes: true,
+              comments: true
+            }
+          }
+        }
+      }
+    },
+    orderBy: {
+      post: {
+        publishedAt: 'desc'
+      }
+    },
+    skip: offset,
+    take: limit
+  })
+
+  const posts = postTags.map(pt => pt.post)
+  const totalPages = Math.ceil(totalCount / limit)
+
+  return {
+    posts,
+    tag,
+    totalCount,
+    totalPages
+  }
+}
+
+// 获取所有标签及其统计信息（用于标签列表页）
+export async function getTagsWithStats() {
+  return await prisma.tag.findMany({
+    where: {
+      isActive: true
+    },
+    include: {
+      _count: {
+        select: {
+          posts: {
+            where: {
+              post: {
+                isPublished: true,
+                isDeleted: false
+              }
+            }
+          }
+        }
+      }
+    },
+    orderBy: [
+      { postCount: 'desc' },
+      { name: 'asc' }
+    ]
+  })
+}
+
+// 获取热门标签（用于侧边栏等）
+export async function getPopularTags(limit: number = 10) {
+  return await prisma.tag.findMany({
+    where: {
+      isActive: true,
+      postCount: {
+        gt: 0
+      }
+    },
+    orderBy: {
+      postCount: 'desc'
+    },
+    take: limit
+  })
 } 
