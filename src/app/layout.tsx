@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
 import './globals.css';
+import { AuthProvider } from '@/lib/auth-context';
 
 import type { FC, PropsWithChildren } from 'react';
 
@@ -45,7 +46,9 @@ export const metadata: Metadata = {
 const RootLayout: FC<PropsWithChildren> = ({ children }) => (
     <html lang="zh-CN" suppressHydrationWarning>
         <body className={inter.className} suppressHydrationWarning>
-            {children}
+            <AuthProvider>
+                {children}
+            </AuthProvider>
         </body>
     </html>
 );

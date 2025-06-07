@@ -37,24 +37,6 @@ const HomePage: FC = async () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* 简化的导航栏 */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-2xl font-bold text-blue-600">
-              Z~Blog
-            </Link>
-            <div className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-blue-600">首页</Link>
-              <Link href="/posts" className="text-gray-700 hover:text-blue-600">文章</Link>
-              <Link href="/categories" className="text-gray-700 hover:text-blue-600">分类</Link>
-              <Link href="/tags" className="text-gray-700 hover:text-blue-600">标签</Link>
-              <Link href="/about" className="text-gray-700 hover:text-blue-600">关于</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       {/* 英雄区域 */}
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
