@@ -33,12 +33,12 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   
   if (!category) {
     return {
-      title: '分类不存在 - 我的博客'
+      title: '分类不存在 - Z~Blog'
     }
   }
 
   return {
-    title: `${category.name} - 文章分类 - 我的博客`,
+    title: `${category.name} - 文章分类 - Z~Blog`,
     description: category.description || `浏览 ${category.name} 分类下的所有文章`,
     openGraph: {
       title: `${category.name} - 文章分类`,

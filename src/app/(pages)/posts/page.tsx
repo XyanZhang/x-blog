@@ -7,7 +7,7 @@ import { getRecentPosts, getCategories, getPopularTags } from '@/lib/db'
 import type { PostWithDetails, CategoryWithCount, TagWithCount } from '@/types/blog'
 
 export const metadata: Metadata = {
-  title: '所有文章 - 我的博客',
+  title: '所有文章 - Z~Blog',
   description: '浏览所有精彩的文章内容，发现感兴趣的主题',
 }
 

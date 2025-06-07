@@ -7,10 +7,10 @@ import { getCategoriesWithStats, getBlogStats } from '@/lib/db'
 import type { CategoriesPageData } from '@/types/blog'
 
 export const metadata: Metadata = {
-  title: '文章分类 - 我的博客',
+  title: '文章分类 - Z~Blog',
   description: '浏览所有文章分类，发现感兴趣的主题内容',
   openGraph: {
-    title: '文章分类 - 我的博客',
+    title: '文章分类 - Z~Blog',
     description: '浏览所有文章分类，发现感兴趣的主题内容',
   }
 }

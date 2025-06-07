@@ -34,12 +34,12 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
   
   if (!tag) {
     return {
-      title: '标签不存在 - 我的博客'
+      title: '标签不存在 - Z~Blog'
     }
   }
 
   return {
-    title: `#${tag.name} - 标签 - 我的博客`,
+    title: `#${tag.name} - 标签 - Z~Blog`,
     description: tag.description || `浏览 #${tag.name} 标签下的所有文章`,
     openGraph: {
       title: `#${tag.name} - 标签`,

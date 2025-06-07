@@ -4,7 +4,7 @@ import type { FC, PropsWithChildren } from 'react';
 import { Header } from '../_components/header';
 
 export const metadata: Metadata = {
-    title: '我的博客',
+    title: 'Z~Blog',
     description: '分享技术知识，记录生活点滴的个人博客',
 };
 

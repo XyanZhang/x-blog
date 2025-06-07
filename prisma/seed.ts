@@ -145,10 +145,10 @@ async function main() {
   // 创建示例文章
   const posts = [
     {
-      title: '欢迎来到我的博客',
+      title: '欢迎来到Z~Blog',
       slug: 'welcome-to-my-blog',
-      excerpt: '这是我的第一篇博客文章，欢迎大家来到我的博客！',
-      content: `# 欢迎来到我的博客
+      excerpt: '这是我的第一篇博客文章，欢迎大家来到Z~Blog！',
+      content: `# 欢迎来到Z~Blog
 
 欢迎来到我的个人博客！这里将分享我在技术学习和生活中的各种心得体会。
 

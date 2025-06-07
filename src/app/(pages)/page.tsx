@@ -42,7 +42,7 @@ const HomePage: FC = async () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="text-2xl font-bold text-blue-600">
-              我的博客
+              Z~Blog
             </Link>
             <div className="hidden md:flex items-center space-x-8">
               <Link href="/" className="text-gray-700 hover:text-blue-600">首页</Link>
@@ -273,7 +273,7 @@ const HomePage: FC = async () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4">我的博客</h3>
+              <h3 className="text-xl font-bold mb-4">Z~Blog</h3>
               <p className="text-gray-400 mb-4">
                 分享技术知识，记录生活点滴。希望我的内容能对你有所帮助。
               </p>
@@ -302,7 +302,7 @@ const HomePage: FC = async () => {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 我的博客. 保留所有权利.</p>
+            <p>&copy; 2024 Z~Blog. 保留所有权利.</p>
           </div>
         </div>
       </footer>

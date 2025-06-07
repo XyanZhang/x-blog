@@ -7,10 +7,10 @@ import { getTagsWithStats, getBlogStats } from '@/lib/db'
 import type { TagsPageData } from '@/types/blog'
 
 export const metadata: Metadata = {
-  title: '标签库 - 我的博客',
+  title: '标签库 - Z~Blog',
   description: '浏览所有文章标签，发现感兴趣的主题内容',
   openGraph: {
-    title: '标签库 - 我的博客',
+    title: '标签库 - Z~Blog',
     description: '浏览所有文章标签，发现感兴趣的主题内容',
   }
 }

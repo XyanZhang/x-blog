@@ -9,8 +9,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
     title: {
-        default: '我的博客',
-        template: '%s | 我的博客'
+        default: 'Z~Blog',
+        template: '%s | Z~Blog'
     },
     description: '分享技术知识，记录生活点滴的个人博客',
     keywords: ['博客', '技术', '编程', 'Next.js', 'React', 'TypeScript'],
@@ -20,13 +20,13 @@ export const metadata: Metadata = {
         type: 'website',
         locale: 'zh_CN',
         url: 'https://yourblog.com',
-        title: '我的博客',
+        title: 'Z~Blog',
         description: '分享技术知识，记录生活点滴的个人博客',
-        siteName: '我的博客',
+        siteName: 'Z~Blog',
     },
     twitter: {
         card: 'summary_large_image',
-        title: '我的博客',
+        title: 'Z~Blog',
         description: '分享技术知识，记录生活点滴的个人博客',
     },
     robots: {
