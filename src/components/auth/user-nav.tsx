@@ -94,6 +94,8 @@ export default function UserNav() {
             个人资料
           </Link>
           
+          {/* 暂时隐藏设置和管理后台 */}
+          {/* 
           <Link
             href="/settings"
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -111,6 +113,7 @@ export default function UserNav() {
               管理后台
             </Link>
           )}
+          */}
           
           <div className="border-t border-gray-100">
             <button

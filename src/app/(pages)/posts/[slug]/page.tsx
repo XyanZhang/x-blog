@@ -8,6 +8,7 @@ import { getPostBySlug, getRelatedPosts, incrementPostViews } from '@/lib/db'
 import type { PostDetail } from '@/types/blog'
 import MarkdownRenderer from '@/components/MarkdownRenderer'
 import TableOfContents from '@/components/TableOfContents'
+import GiscusComments from '@/components/comments/giscus-comments'
 
 interface PostDetailPageProps {
   params: Promise<{
@@ -312,78 +313,9 @@ const PostDetailPage: FC<PostDetailPageProps> = async ({ params }) => {
               </div>
             </div>
 
-            {/* 评论区域 */}
+            {/* Giscus 评论区域 */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-6">
-                评论 ({post._count.comments})
-              </h3>
-              
-              {post.comments.length > 0 ? (
-                <div className="space-y-6">
-                  {post.comments.map((comment) => (
-                    <div key={comment.id} className="border-b border-gray-100 pb-6 last:border-b-0">
-                      <div className="flex items-start space-x-4">
-                        <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                          {comment.author.avatar ? (
-                            <img 
-                              src={comment.author.avatar} 
-                              alt={comment.author.displayName || '用户'} 
-                              className="w-10 h-10 rounded-full object-cover"
-                            />
-                          ) : (
-                            comment.author.displayName?.charAt(0) || 'U'
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="font-medium text-gray-900">
-                              {comment.author.displayName || '匿名用户'}
-                            </span>
-                            <span className="text-sm text-gray-500">
-                              {formatDate(comment.createdAt)}
-                            </span>
-                          </div>
-                          <p className="text-gray-700 mb-3">{comment.content}</p>
-                          
-                          {/* 回复 */}
-                          {comment.replies.length > 0 && (
-                            <div className="space-y-4 mt-4 ml-4 border-l-2 border-gray-100 pl-4">
-                              {comment.replies.map((reply) => (
-                                <div key={reply.id} className="flex items-start space-x-3">
-                                  <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                                    {reply.author.avatar ? (
-                                      <img 
-                                        src={reply.author.avatar} 
-                                        alt={reply.author.displayName || '用户'} 
-                                        className="w-8 h-8 rounded-full object-cover"
-                                      />
-                                    ) : (
-                                      reply.author.displayName?.charAt(0) || 'U'
-                                    )}
-                                  </div>
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <span className="font-medium text-gray-900 text-sm">
-                                        {reply.author.displayName || '匿名用户'}
-                                      </span>
-                                      <span className="text-xs text-gray-500">
-                                        {formatDate(reply.createdAt)}
-                                      </span>
-                                    </div>
-                                    <p className="text-gray-700 text-sm">{reply.content}</p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500 text-center py-8">暂无评论，成为第一个评论的人吧！</p>
-              )}
+              <GiscusComments slug={post.slug} title={post.title} />
             </div>
           </main>
         </div>
