@@ -46,10 +46,11 @@ export async function GET(request: NextRequest) {
             include: {
               media: true,
             },
-            take: 4, // 只获取前4张图片作为预览
-            orderBy: {
-              createdAt: 'desc',
-            },
+            orderBy: [
+              { isFeatured: 'desc' },
+              { takenAt: 'desc' },
+              { createdAt: 'desc' },
+            ],
           },
           _count: {
             select: {

@@ -96,8 +96,8 @@ export default function AlbumGrid({ searchParams }: AlbumGridProps) {
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               ) : album.photos.length > 0 ? (
-                <div className="grid grid-cols-2 gap-1 h-full">
-                  {album.photos.slice(0, 4).map((photo, index) => (
+                <div className={`grid ${getGridClass(album.photos.length)} gap-1 h-full`}>
+                  {album.photos.slice(0, Math.min(album.photos.length, 4)).map((photo, index) => (
                     <div key={photo.id} className="relative">
                       <Image
                         src={photo.media.url}
@@ -167,4 +167,20 @@ export default function AlbumGrid({ searchParams }: AlbumGridProps) {
       )}
     </div>
   );
+}
+
+// 根据图片数量返回网格类名
+function getGridClass(photoCount: number): string {
+  switch (photoCount) {
+    case 1:
+      return 'grid-cols-1';
+    case 2:
+      return 'grid-cols-2';
+    case 3:
+      return 'grid-cols-2';
+    case 4:
+      return 'grid-cols-2';
+    default:
+      return 'grid-cols-2';
+  }
 } 
