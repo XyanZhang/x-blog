@@ -30,6 +30,8 @@ export const Header: FC = () => {
                         <nav className="hidden md:flex items-center space-x-6">
                             <NavLink href="/">首页</NavLink>
                             <NavLink href="/posts">文章</NavLink>
+                            <NavLink href="/photos">摄影</NavLink>
+                            <NavLink href="/albums">图册</NavLink>
                             <NavLink href="/categories">分类</NavLink>
                             <NavLink href="/tags">标签</NavLink>
                             <NavLink href="/about">关于</NavLink>
@@ -91,6 +93,20 @@ export const Header: FC = () => {
                         onClick={() => setIsMobileMenuOpen(false)}
                     >
                         文章
+                    </NavLink>
+                    <NavLink 
+                        href="/photos" 
+                        className="block"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        摄影
+                    </NavLink>
+                    <NavLink 
+                        href="/albums" 
+                        className="block"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        图册
                     </NavLink>
                     <NavLink 
                         href="/categories" 

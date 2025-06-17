@@ -38,7 +38,7 @@ const HomePage: FC = async () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* 英雄区域 */}
-      <section className="py-20 px-4">
+      <section className="pt-28 pb-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
             分享技术，记录生活

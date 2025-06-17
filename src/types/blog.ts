@@ -96,4 +96,103 @@ export interface TagPageData {
 export interface TagsPageData {
   tags: TagWithCount[]
   totalPosts: number
+}
+
+// 摄影图册相关类型
+export interface PhotoAlbum {
+  id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  coverImage?: string;
+  isPublished: boolean;
+  isPrivate: boolean;
+  sortOrder: number;
+  creatorId: string;
+  creator: User;
+  createdAt: Date;
+  updatedAt: Date;
+  photos: Photo[];
+}
+
+export interface Photo {
+  id: string;
+  title?: string;
+  description?: string;
+  location?: string;
+  camera?: string;
+  lens?: string;
+  settings?: string;
+  tags?: string;
+  isFeatured: boolean;
+  viewCount: number;
+  likeCount: number;
+  mediaId: string;
+  media: Media;
+  albumId?: string;
+  album?: PhotoAlbum;
+  takenAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  postPhotos: PostPhoto[];
+}
+
+export interface PostPhoto {
+  id: string;
+  postId: string;
+  photoId: string;
+  sortOrder: number;
+  post: Post;
+  photo: Photo;
+  createdAt: Date;
+}
+
+export interface Media {
+  id: string;
+  filename: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  url: string;
+  thumbnailUrl?: string;
+  alt?: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+  uploaderId?: string;
+  uploader?: User;
+  createdAt: Date;
+  updatedAt: Date;
+  photos: Photo[];
+}
+
+// 创建图册的请求类型
+export interface CreatePhotoAlbumRequest {
+  title: string;
+  description?: string;
+  coverImage?: string;
+  isPublished?: boolean;
+  isPrivate?: boolean;
+}
+
+// 创建图片的请求类型
+export interface CreatePhotoRequest {
+  title?: string;
+  description?: string;
+  location?: string;
+  camera?: string;
+  lens?: string;
+  settings?: string;
+  tags?: string;
+  isFeatured?: boolean;
+  albumId?: string;
+  takenAt?: Date;
+  mediaId: string;
+}
+
+// 关联图片到文章的请求类型
+export interface LinkPhotoToPostRequest {
+  postId: string;
+  photoId: string;
+  sortOrder?: number;
 } 
