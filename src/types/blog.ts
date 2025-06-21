@@ -53,7 +53,6 @@ export interface HomePageData {
   featuredPost: PostWithDetails | null
   recentPosts: PostWithDetails[]
   categories: CategoryWithCount[]
-  stats: BlogStats
 }
 
 // 分类页面数据类型

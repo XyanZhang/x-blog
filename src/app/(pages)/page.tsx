@@ -1,25 +1,23 @@
 // src/app/(pages)/page.tsx
 import { FC } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Calendar, Eye, User, Heart, MessageCircle } from 'lucide-react'
+import { ArrowRight, Calendar, User, Sparkles, BookOpen, Camera } from 'lucide-react'
 
-import { getFeaturedPost, getRecentPosts, getCategories, getBlogStats, calculateReadingTime, formatNumber } from '@/lib/db'
+import { getFeaturedPost, getRecentPosts, getCategories } from '@/lib/db'
 import type { HomePageData } from '@/types/blog'
 
 // 服务器组件 - 获取数据
 async function getHomePageData(): Promise<HomePageData> {
-  const [featuredPost, recentPosts, categories, stats] = await Promise.all([
+  const [featuredPost, recentPosts, categories] = await Promise.all([
     getFeaturedPost(),
     getRecentPosts(3),
-    getCategories(),
-    getBlogStats()
+    getCategories()
   ])
 
   return {
     featuredPost,
     recentPosts,
-    categories,
-    stats
+    categories
   }
 }
 
@@ -33,119 +31,112 @@ function formatDate(date: Date): string {
 }
 
 const HomePage: FC = async () => {
-  const { featuredPost, recentPosts, categories, stats } = await getHomePageData()
+  const { featuredPost, recentPosts, categories } = await getHomePageData()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* 英雄区域 */}
-      <section className="pt-28 pb-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            分享技术，记录生活
-          </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            欢迎来到我的个人博客！这里有 {stats.totalPosts} 篇文章等你探索
-          </p>
-          <Link 
-            href="/posts"
-            className="inline-flex items-center px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-          >
-            开始阅读
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Link>
+      <section className="pt-32 pb-24 px-4 relative overflow-hidden">
+        {/* 背景装饰 */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+          <div className="absolute top-40 left-40 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
         </div>
-      </section>
-
-      {/* 统计数据 */}
-      <section className="py-8 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="bg-white rounded-xl p-6 text-center shadow-sm border border-gray-100">
-              <div className="text-2xl mb-2">📝</div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">{stats.totalPosts}</div>
-              <div className="text-sm text-gray-600">文章总数</div>
-            </div>
-            <div className="bg-white rounded-xl p-6 text-center shadow-sm border border-gray-100">
-              <div className="text-2xl mb-2">👀</div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">{formatNumber(stats.totalViews)}</div>
-              <div className="text-sm text-gray-600">总浏览量</div>
-            </div>
-            <div className="bg-white rounded-xl p-6 text-center shadow-sm border border-gray-100">
-              <div className="text-2xl mb-2">💬</div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">{stats.totalComments}</div>
-              <div className="text-sm text-gray-600">评论数</div>
-            </div>
-            <div className="bg-white rounded-xl p-6 text-center shadow-sm border border-gray-100">
-              <div className="text-2xl mb-2">❤️</div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">{stats.totalLikes}</div>
-              <div className="text-sm text-gray-600">点赞数</div>
-            </div>
+        
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          <div className="inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-gray-700 mb-6 border border-white/20">
+            <Sparkles className="h-4 w-4 mr-2 text-blue-600" />
+            欢迎来到我的个人空间
+          </div>
+          <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight">
+            分享技术
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+              记录生活
+            </span>
+          </h1>
+          <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+            在这里，我分享编程技术、项目经验和生活感悟。希望我的内容能为你带来启发和帮助。
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              href="/posts"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              <BookOpen className="mr-2 h-5 w-5" />
+              开始阅读
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+            <Link 
+              href="/photos"
+              className="inline-flex items-center px-8 py-4 bg-white/80 backdrop-blur-sm text-gray-700 rounded-xl hover:bg-white transition-all duration-300 font-medium border border-white/20 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              <Camera className="mr-2 h-5 w-5" />
+              摄影作品
+            </Link>
           </div>
         </div>
       </section>
 
       {/* 特色文章 */}
       {featuredPost && featuredPost.category && (
-        <section className="py-16 px-4">
+        <section className="py-20 px-4">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">特色文章</h2>
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">精选推荐</h2>
+              <p className="text-lg text-gray-600">不容错过的精彩内容</p>
+            </div>
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/20">
               <div className="md:flex">
-                <div className="md:w-1/2">
+                <div className="md:w-1/2 relative">
                   <div 
-                    className="h-64 md:h-full flex items-center justify-center text-white"
+                    className="h-64 md:h-full flex items-center justify-center text-white relative overflow-hidden"
                     style={{ backgroundColor: featuredPost.category.color || '#6b7280' }}
                   >
-                    <div className="text-center p-8">
-                      <div className="text-6xl mb-4">{featuredPost.category.icon}</div>
-                      <h3 className="text-2xl font-bold mb-2">{featuredPost.category.name}</h3>
-                      <p className="text-white/80">精选内容</p>
+                    <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent"></div>
+                    <div className="text-center p-8 relative z-10">
+                      <div className="text-7xl mb-6 drop-shadow-lg">{featuredPost.category.icon}</div>
+                      <h3 className="text-3xl font-bold mb-3 drop-shadow-lg">{featuredPost.category.name}</h3>
+                      <p className="text-white/90 text-lg">精选内容</p>
                     </div>
                   </div>
                 </div>
-                <div className="md:w-1/2 p-8">
-                  <div className="flex items-center mb-4">
+                <div className="md:w-1/2 p-10">
+                  <div className="flex items-center mb-6">
                     <span 
-                      className="px-3 py-1 rounded-full text-sm font-medium text-white"
+                      className="px-4 py-2 rounded-full text-sm font-medium text-white shadow-lg"
                       style={{ backgroundColor: featuredPost.category.color || '#6b7280' }}
                     >
                       {featuredPost.category.icon} {featuredPost.category.name}
                     </span>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  <h3 className="text-3xl font-bold text-gray-900 mb-6 leading-tight">
                     <Link href={`/posts/${featuredPost.slug}`} className="hover:text-blue-600 transition-colors">
                       {featuredPost.title}
                     </Link>
                   </h3>
-                  <p className="text-gray-600 mb-6 leading-relaxed">
+                  <p className="text-gray-600 mb-8 leading-relaxed text-lg">
                     {featuredPost.excerpt}
                   </p>
-                  <div className="flex items-center justify-between text-sm text-gray-500">
+                  <div className="flex items-center justify-between text-sm text-gray-500 mb-6">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center">
-                        <User className="h-4 w-4 mr-1" />
+                        <User className="h-4 w-4 mr-2" />
                         {featuredPost.author.displayName || '匿名用户'}
                       </div>
                       <div className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-1" />
+                        <Calendar className="h-4 w-4 mr-2" />
                         {formatDate(featuredPost.publishedAt!)}
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center">
-                        <Eye className="h-4 w-4 mr-1" />
-                        {featuredPost.viewCount}
-                      </div>
-                      <div className="flex items-center">
-                        <Heart className="h-4 w-4 mr-1" />
-                        {featuredPost._count.likes}
-                      </div>
-                      <div className="flex items-center">
-                        <span className="mr-1">⏱</span>
-                        {calculateReadingTime(featuredPost.content)}分钟
-                      </div>
-                    </div>
                   </div>
+                  <Link 
+                    href={`/posts/${featuredPost.slug}`}
+                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-medium"
+                  >
+                    阅读全文
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
                 </div>
               </div>
             </div>
@@ -154,94 +145,89 @@ const HomePage: FC = async () => {
       )}
 
       {/* 最新文章 */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">最新文章</h2>
-            <Link 
-              href="/posts"
-              className="text-blue-600 hover:text-blue-700 font-medium flex items-center"
-            >
-              查看全部
-              <ArrowRight className="ml-1 h-4 w-4" />
-            </Link>
+      <section className="py-20 px-4 bg-white/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">最新文章</h2>
+            <p className="text-lg text-gray-600">探索最新的技术分享和生活感悟</p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {recentPosts.map((post) => (
-              <article key={post.id} className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-shadow">
+              <article key={post.id} className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 border border-white/20 group hover:-translate-y-2">
                 {post.category && (
                   <div 
-                    className="h-32 rounded-lg mb-4 flex items-center justify-center"
+                    className="h-40 rounded-xl mb-6 flex items-center justify-center relative overflow-hidden"
                     style={{ backgroundColor: post.category.color || '#6b7280' }}
                   >
-                    <span className="text-white text-3xl">{post.category.icon}</span>
+                    <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent"></div>
+                    <span className="text-white text-4xl relative z-10 drop-shadow-lg">{post.category.icon}</span>
                   </div>
                 )}
                 {post.category && (
-                  <div className="flex items-center mb-3">
+                  <div className="flex items-center mb-4">
                     <span 
-                      className="px-2 py-1 rounded-full text-xs font-medium text-white"
+                      className="px-3 py-1 rounded-full text-xs font-medium text-white shadow-md"
                       style={{ backgroundColor: post.category.color || '#6b7280' }}
                     >
                       {post.category.icon} {post.category.name}
                     </span>
                   </div>
                 )}
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  <Link href={`/posts/${post.slug}`} className="hover:text-blue-600 transition-colors">
+                <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">
+                  <Link href={`/posts/${post.slug}`}>
                     {post.title}
                   </Link>
                 </h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">
+                <p className="text-gray-600 mb-6 line-clamp-3 leading-relaxed">
                   {post.excerpt}
                 </p>
                 <div className="flex items-center justify-between text-sm text-gray-500">
                   <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" />
+                    <Calendar className="h-4 w-4 mr-2" />
                     {formatDate(post.publishedAt!)}
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="flex items-center">
-                      <Eye className="h-4 w-4 mr-1" />
-                      {post.viewCount}
-                    </div>
-                    <div className="flex items-center">
-                      <Heart className="h-4 w-4 mr-1" />
-                      {post._count.likes}
-                    </div>
-                  </div>
+                  <Link 
+                    href={`/posts/${post.slug}`}
+                    className="text-blue-600 hover:text-blue-700 font-medium flex items-center group-hover:translate-x-1 transition-transform"
+                  >
+                    阅读
+                    <ArrowRight className="ml-1 h-4 w-4" />
+                  </Link>
                 </div>
               </article>
             ))}
+          </div>
+          <div className="text-center">
+            <Link 
+              href="/posts"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              查看全部文章
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
           </div>
         </div>
       </section>
 
       {/* 分类展示 */}
-      <section className="py-16 px-4">
+      <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">文章分类</h2>
-            <Link 
-              href="/categories"
-              className="text-blue-600 hover:text-blue-700 font-medium flex items-center"
-            >
-              查看全部
-              <ArrowRight className="ml-1 h-4 w-4" />
-            </Link>
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">文章分类</h2>
+            <p className="text-lg text-gray-600">按主题浏览感兴趣的内容</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {categories.map((category) => (
               <Link 
                 key={category.id}
                 href={`/categories/${category.slug}`}
-                className="bg-white rounded-xl p-6 text-center hover:shadow-lg transition-all hover:-translate-y-1 border border-gray-100"
+                className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-2xl transition-all duration-300 border border-white/20 group hover:-translate-y-2"
               >
-                <div className="text-4xl mb-3">{category.icon}</div>
-                <h3 className="font-bold text-gray-900 mb-2">{category.name}</h3>
-                <p className="text-sm text-gray-600">{category._count.posts} 篇文章</p>
+                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">{category.icon}</div>
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">{category.name}</h3>
+                <p className="text-sm text-gray-600 mb-4">{category._count.posts} 篇文章</p>
                 <div 
-                  className="w-full h-1 rounded-full mt-4"
+                  className="w-full h-1 rounded-full transition-all duration-300 group-hover:h-2"
                   style={{ backgroundColor: category.color || '#6b7280' }}
                 />
               </Link>
@@ -251,39 +237,42 @@ const HomePage: FC = async () => {
       </section>
 
       {/* 页脚 */}
-      <footer className="bg-gray-900 text-white py-12 px-4">
+      <footer className="bg-gray-900 text-white py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4">Z~Blog</h3>
-              <p className="text-gray-400 mb-4">
-                分享技术知识，记录生活点滴。希望我的内容能对你有所帮助。
+              <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Z~Blog</h3>
+              <p className="text-gray-400 mb-6 leading-relaxed">
+                分享技术知识，记录生活点滴。希望我的内容能为你带来启发和帮助。
               </p>
               <div className="flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">GitHub</a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">Twitter</a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">邮箱</a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors hover:scale-110 transform">GitHub</a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors hover:scale-110 transform">Twitter</a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors hover:scale-110 transform">邮箱</a>
               </div>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4">快速链接</h3>
-              <ul className="space-y-2">
-                <li><Link href="/posts" className="text-gray-400 hover:text-white transition-colors">所有文章</Link></li>
-                <li><Link href="/categories" className="text-gray-400 hover:text-white transition-colors">文章分类</Link></li>
-                <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors">关于我</Link></li>
+              <h3 className="text-lg font-semibold mb-6">快速链接</h3>
+              <ul className="space-y-3">
+                <li><Link href="/posts" className="text-gray-400 hover:text-white transition-colors hover:translate-x-1 transform inline-block">所有文章</Link></li>
+                <li><Link href="/categories" className="text-gray-400 hover:text-white transition-colors hover:translate-x-1 transform inline-block">文章分类</Link></li>
+                <li><Link href="/photos" className="text-gray-400 hover:text-white transition-colors hover:translate-x-1 transform inline-block">摄影作品</Link></li>
+                <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors hover:translate-x-1 transform inline-block">关于我</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4">统计信息</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>文章: {stats.totalPosts} 篇</li>
-                <li>浏览: {formatNumber(stats.totalViews)} 次</li>
-                <li>评论: {stats.totalComments} 条</li>
-                <li>点赞: {stats.totalLikes} 个</li>
-              </ul>
+              <h3 className="text-lg font-semibold mb-6">联系我</h3>
+              <p className="text-gray-400 mb-4 leading-relaxed">
+                如果你有任何问题或建议，欢迎通过以下方式联系我。
+              </p>
+              <div className="space-y-2 text-gray-400">
+                <p>📧 admin@blog.com</p>
+                <p>🐙 GitHub: @yourname</p>
+                <p>🐦 Twitter: @yourname</p>
+              </div>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
             <p>&copy; 2024 Z~Blog. 保留所有权利.</p>
           </div>
         </div>
