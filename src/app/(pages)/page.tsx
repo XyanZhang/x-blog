@@ -53,15 +53,28 @@ const HomePage: FC = async () => {
           <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight">
             <TypewriterText 
               texts={[
-                '分享技术',
-                '记录生活', 
-                '探索世界',
-                '创造价值',
-                '学习成长',
-                '传递知识'
+                '分享技术，记录生活',
+                '探索编程的无限可能',
+                '用代码构建美好世界',
+                '技术改变生活',
+                '学习永无止境',
+                '创造价值，传递知识',
+                '拥抱开源，共同成长',
+                '代码如诗，逻辑如画',
+                '工具提升效率',
+                '终端里的无限宇宙',
+                '享受创造的乐趣',
+                '拥抱技术的变化',
+                '追求代码的优雅',
+                '用技术解决问题',
+                '连接开发者社区',
+                '发现技术的美好',
+                '让世界因技术而更好'
               ]}
-              speed={120}
+              speed={150}
               delay={2500}
+              groupSize={1}
+              maxWidth="max-w-6xl"
               className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"
             />
           </h1>
