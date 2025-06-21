@@ -119,7 +119,7 @@ export default function CreateAlbumForm() {
   };
 
   return (
-    <div className="max-w-2xl">
+    <div className="">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
         创建新图册
       </h2>

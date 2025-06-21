@@ -41,7 +41,7 @@ export const Header: FC = () => {
                     {/* 右侧：移动端菜单按钮和用户导航 */}
                     <div className="flex items-center space-x-4">
                         {/* 用户导航 */}
-                        <UserNav />
+                        {/* <UserNav /> */}
                         
                         {/* 移动端菜单按钮 */}
                         <button
