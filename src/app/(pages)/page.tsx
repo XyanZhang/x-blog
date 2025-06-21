@@ -5,6 +5,7 @@ import { ArrowRight, Calendar, User, Sparkles, BookOpen, Camera } from 'lucide-r
 
 import { getFeaturedPost, getRecentPosts, getCategories } from '@/lib/db'
 import type { HomePageData } from '@/types/blog'
+import TypewriterText from '@/components/TypewriterText'
 
 // 服务器组件 - 获取数据
 async function getHomePageData(): Promise<HomePageData> {
@@ -50,10 +51,19 @@ const HomePage: FC = async () => {
             欢迎来到我的个人空间
           </div>
           <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight">
-            分享技术
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-              记录生活
-            </span>
+            <TypewriterText 
+              texts={[
+                '分享技术',
+                '记录生活', 
+                '探索世界',
+                '创造价值',
+                '学习成长',
+                '传递知识'
+              ]}
+              speed={120}
+              delay={2500}
+              className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"
+            />
           </h1>
           <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
             在这里，我分享编程技术、项目经验和生活感悟。希望我的内容能为你带来启发和帮助。

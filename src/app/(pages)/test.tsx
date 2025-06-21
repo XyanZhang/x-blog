@@ -1,12 +1,27 @@
+import TypewriterText from '@/components/TypewriterText'
+
 export default function TestPage() {
   return (
-    <div className="min-h-screen bg-blue-500 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Tailwind CSS 测试</h1>
-        <p className="text-gray-600 mb-4">如果你能看到蓝色背景和这个白色卡片，说明 Tailwind CSS 正在工作。</p>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
-          测试按钮
-        </button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-6xl font-bold text-gray-900 mb-8">
+          <TypewriterText 
+            texts={[
+              '分享技术',
+              '记录生活', 
+              '探索世界',
+              '创造价值',
+              '学习成长',
+              '传递知识'
+            ]}
+            speed={120}
+            delay={2500}
+            className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"
+          />
+        </h1>
+        <p className="text-xl text-gray-600">
+          打字机效果演示
+        </p>
       </div>
     </div>
   )

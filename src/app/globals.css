@@ -156,6 +156,22 @@
     animation-delay: 4s;
   }
 
+  /* 打字机光标动画 */
+  @keyframes blink {
+    0%, 50% {
+      opacity: 1;
+      transform: scaleY(1);
+    }
+    51%, 100% {
+      opacity: 0.3;
+      transform: scaleY(0.8);
+    }
+  }
+
+  .animate-blink {
+    animation: blink 1.2s ease-in-out infinite;
+  }
+
   /* 自定义滚动条样式 */
   .scrollbar-thin {
     scrollbar-width: thin;
