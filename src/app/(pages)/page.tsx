@@ -14,7 +14,7 @@ async function getHomePageData(): Promise<HomePageData> {
     getRecentPosts(3),
     getCategories()
   ])
-
+  console.log(recentPosts)
   return {
     featuredPost,
     recentPosts,
