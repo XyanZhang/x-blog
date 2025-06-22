@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { ChevronDown } from 'lucide-react'
 
 interface TypewriterTextProps {
   texts: string[]
@@ -88,6 +89,27 @@ const TypewriterText: React.FC<TypewriterTextProps> = ({
           }}
         ></span>
       </span>
+    </div>
+  )
+}
+
+// 客户端滚动指示器组件
+export const ScrollIndicator: React.FC = () => {
+  const handleScroll = () => {
+    document.getElementById('content-section')?.scrollIntoView({ 
+      behavior: 'smooth' 
+    })
+  }
+
+  return (
+    <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+      <button 
+        onClick={handleScroll}
+        className="flex flex-col items-center text-gray-600 hover:text-gray-800 transition-colors group"
+      >
+        <span className="text-sm mb-2 group-hover:text-blue-600 transition-colors">向下滚动</span>
+        <ChevronDown className="h-6 w-6 animate-scroll-indicator" />
+      </button>
     </div>
   )
 }
