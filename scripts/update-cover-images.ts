@@ -1,6 +1,4 @@
 import { PrismaClient } from '@prisma/client'
-import fs from 'fs'
-import path from 'path'
 
 const prisma = new PrismaClient()
 
@@ -27,12 +25,12 @@ function generateSVGCover(title: string, categoryName: string, categoryIcon: str
   return `data:image/svg+xml;base64,${Buffer.from(svg, 'utf-8').toString('base64')}`
 }
 
-async function addCoverImages() {
+async function updateCoverImages() {
   try {
-    // 获取所有没有封面图片的文章
+    // 获取所有有封面图片的文章（包括外部链接的）
     const posts = await prisma.post.findMany({
       where: {
-        coverImage: null,
+        coverImage: { not: null },
         isDeleted: false
       },
       include: {
@@ -40,41 +38,43 @@ async function addCoverImages() {
       }
     })
 
-    console.log(`找到 ${posts.length} 篇没有封面图片的文章`)
+    console.log(`找到 ${posts.length} 篇有封面图片的文章`)
 
-    // 为每篇文章添加默认封面图片
+    // 为每篇文章更新封面图片
     for (const post of posts) {
-      // 根据分类生成不同的默认封面
-      let defaultCoverImage = ''
-      
-      if (post.category) {
-        // 使用分类颜色和图标生成SVG封面
-        const categoryColor = post.category.color || '#6b7280'
-        const categoryIcon = post.category.icon || '📝'
+      // 检查是否是外部链接（via.placeholder.com）
+      if (post.coverImage && post.coverImage.includes('via.placeholder.com')) {
+        console.log(`更新文章 "${post.title}" 的封面图片`)
         
-        defaultCoverImage = generateSVGCover(
-          post.title,
-          post.category.name,
-          categoryIcon,
-          categoryColor
-        )
+        // 根据分类生成新的SVG封面
+        let newCoverImage = ''
+        
+        if (post.category) {
+          newCoverImage = generateSVGCover(
+            post.title,
+            post.category.name,
+            post.category.icon || '📝',
+            post.category.color || '#6b7280'
+          )
+        } else {
+          newCoverImage = generateSVGCover(
+            post.title,
+            '文章',
+            '📝',
+            '#6b7280'
+          )
+        }
+
+        // 更新文章
+        await prisma.post.update({
+          where: { id: post.id },
+          data: { coverImage: newCoverImage }
+        })
+
+        console.log(`已更新文章 "${post.title}" 的封面图片`)
       } else {
-        // 没有分类的文章使用通用封面
-        defaultCoverImage = generateSVGCover(
-          post.title,
-          '文章',
-          '📝',
-          '#6b7280'
-        )
+        console.log(`文章 "${post.title}" 的封面图片无需更新`)
       }
-
-      // 更新文章
-      await prisma.post.update({
-        where: { id: post.id },
-        data: { coverImage: defaultCoverImage }
-      })
-
-      console.log(`已为文章 "${post.title}" 添加封面图片`)
     }
 
     console.log('所有文章的封面图片已更新完成！')
@@ -85,4 +85,4 @@ async function addCoverImages() {
   }
 }
 
-addCoverImages() 
+updateCoverImages() 

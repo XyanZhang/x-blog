@@ -131,6 +131,37 @@ const NewPostPage: FC = () => {
     }
   }
 
+  // 生成默认SVG封面图片
+  const generateDefaultCover = () => {
+    const title = formData.title || '新文章'
+    const category = categories.find(c => c.id === formData.categoryId)
+    const categoryName = category?.name || '文章'
+    const categoryIcon = category?.icon || '📝'
+    const categoryColor = category?.color || '#6b7280'
+
+    const svg = `
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:${categoryColor};stop-opacity:1" />
+      <stop offset="100%" style="stop-color:${categoryColor}dd;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="400" fill="url(#grad)"/>
+  <circle cx="200" cy="200" r="80" fill="rgba(255,255,255,0.1)"/>
+  <circle cx="600" cy="150" r="60" fill="rgba(255,255,255,0.05)"/>
+  <circle cx="650" cy="300" r="40" fill="rgba(255,255,255,0.08)"/>
+  <text x="400" y="180" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="white">${categoryIcon}</text>
+  <text x="400" y="240" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white">${categoryName}</text>
+  <text x="400" y="280" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="rgba(255,255,255,0.8)">${title}</text>
+</svg>`
+
+    // 使用 encodeURIComponent 处理中文字符
+    const encodedSvg = encodeURIComponent(svg)
+    const svgDataUrl = `data:image/svg+xml;charset=utf-8,${encodedSvg}`
+    setFormData(prev => ({ ...prev, coverImage: svgDataUrl }))
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -267,6 +298,16 @@ const NewPostPage: FC = () => {
                       className="hidden"
                     />
                   </label>
+                  <button
+                    type="button"
+                    onClick={generateDefaultCover}
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    生成默认封面
+                  </button>
                   {formData.coverImage && (
                     <span className="text-sm text-gray-500">
                       已选择封面图片

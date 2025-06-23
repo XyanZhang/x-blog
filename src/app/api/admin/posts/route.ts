@@ -30,12 +30,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: '标题和内容不能为空' }, { status: 400 })
     }
 
-    // 生成slug
-    const slug = title
-      .toLowerCase()
-      .replace(/[^a-z0-9\u4e00-\u9fa5]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '')
+    // 生成slug - 使用标题和其他参数生成10位hash值
+    const generateSlug = (title: string, authorId: string, timestamp: number): string => {
+      // 组合标题、作者ID和时间戳
+      const input = `${title}-${authorId}-${timestamp}`
+      
+      // 简单的hash函数生成10位字符串
+      let hash = 0
+      for (let i = 0; i < input.length; i++) {
+        const char = input.charCodeAt(i)
+        hash = ((hash << 5) - hash) + char
+        hash = hash & hash // 转换为32位整数
+      }
+      
+      // 转换为36进制并取前10位
+      const hashStr = Math.abs(hash).toString(36)
+      return hashStr.substring(0, 10)
+    }
+
+    const timestamp = Date.now()
+    const slug = generateSlug(title, user.id, timestamp)
 
     // 检查slug是否已存在
     const existingPost = await prisma.post.findUnique({
@@ -43,7 +57,40 @@ export async function POST(request: NextRequest) {
     })
 
     if (existingPost) {
-      return NextResponse.json({ message: '文章标题已存在，请使用不同的标题' }, { status: 400 })
+      // 如果slug已存在，重新生成（理论上概率很小）
+      const newTimestamp = Date.now()
+      const newSlug = generateSlug(title, user.id, newTimestamp)
+      
+      // 再次检查是否唯一
+      const existingWithNewSlug = await prisma.post.findUnique({
+        where: { slug: newSlug }
+      })
+      
+      if (existingWithNewSlug) {
+        return NextResponse.json({ message: '文章创建失败，请重试' }, { status: 400 })
+      }
+      
+      // 使用新生成的slug
+      const post = await prisma.post.create({
+        data: {
+          title,
+          slug: newSlug,
+          excerpt: excerpt || content.substring(0, 200) + '...',
+          content,
+          htmlContent: content, // 这里可以添加Markdown转HTML的逻辑
+          coverImage,
+          isPublished,
+          publishedAt: isPublished ? new Date() : null,
+          readingTime: calculateReadingTime(content),
+          metaTitle: metaTitle || title,
+          metaDescription: metaDescription || excerpt || content.substring(0, 160),
+          metaKeywords,
+          authorId: user.id,
+          categoryId: categoryId || null
+        }
+      })
+
+      return NextResponse.json(post, { status: 201 })
     }
 
     // 创建文章

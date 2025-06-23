@@ -100,11 +100,26 @@ export async function PUT(
     // 生成新的slug（如果标题改变了）
     let slug = existingPost.slug
     if (title !== existingPost.title) {
-      slug = title
-        .toLowerCase()
-        .replace(/[^a-z0-9\u4e00-\u9fa5]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '')
+      // 生成slug - 使用标题和其他参数生成10位hash值
+      const generateSlug = (title: string, authorId: string, timestamp: number): string => {
+        // 组合标题、作者ID和时间戳
+        const input = `${title}-${authorId}-${timestamp}`
+        
+        // 简单的hash函数生成10位字符串
+        let hash = 0
+        for (let i = 0; i < input.length; i++) {
+          const char = input.charCodeAt(i)
+          hash = ((hash << 5) - hash) + char
+          hash = hash & hash // 转换为32位整数
+        }
+        
+        // 转换为36进制并取前10位
+        const hashStr = Math.abs(hash).toString(36)
+        return hashStr.substring(0, 10)
+      }
+
+      const timestamp = Date.now()
+      slug = generateSlug(title, existingPost.authorId, timestamp)
 
       // 检查新slug是否已存在（排除当前文章）
       const slugExists = await prisma.post.findFirst({
@@ -116,7 +131,22 @@ export async function PUT(
       })
 
       if (slugExists) {
-        return NextResponse.json({ message: '文章标题已存在，请使用不同的标题' }, { status: 400 })
+        // 如果slug已存在，重新生成
+        const newTimestamp = Date.now()
+        slug = generateSlug(title, existingPost.authorId, newTimestamp)
+        
+        // 再次检查是否唯一
+        const existingWithNewSlug = await prisma.post.findFirst({
+          where: {
+            slug,
+            id: { not: params.id },
+            isDeleted: false
+          }
+        })
+        
+        if (existingWithNewSlug) {
+          return NextResponse.json({ message: '文章更新失败，请重试' }, { status: 400 })
+        }
       }
     }
 
