@@ -117,17 +117,35 @@ const HomePage: FC = async () => {
               <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/20">
                 <div className="md:flex">
                   <div className="md:w-1/2 relative">
-                    <div 
-                      className="h-64 md:h-full flex items-center justify-center text-white relative overflow-hidden"
-                      style={{ backgroundColor: featuredPost.category.color || '#6b7280' }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent"></div>
-                      <div className="text-center p-8 relative z-10">
-                        <div className="text-7xl mb-6 drop-shadow-lg">{featuredPost.category.icon}</div>
-                        <h3 className="text-3xl font-bold mb-3 drop-shadow-lg">{featuredPost.category.name}</h3>
-                        <p className="text-white/90 text-lg">精选内容</p>
+                    {featuredPost.coverImage ? (
+                      <div className="h-64 md:h-full relative overflow-hidden">
+                        <img 
+                          src={featuredPost.coverImage} 
+                          alt={featuredPost.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-br from-black/40 to-transparent"></div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-center p-8 relative z-10">
+                            <div className="text-7xl mb-6 drop-shadow-lg">{featuredPost.category.icon}</div>
+                            <h3 className="text-3xl font-bold mb-3 drop-shadow-lg text-white">{featuredPost.category.name}</h3>
+                            <p className="text-white/90 text-lg">精选内容</p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div 
+                        className="h-64 md:h-full flex items-center justify-center text-white relative overflow-hidden"
+                        style={{ backgroundColor: featuredPost.category.color || '#6b7280' }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent"></div>
+                        <div className="text-center p-8 relative z-10">
+                          <div className="text-7xl mb-6 drop-shadow-lg">{featuredPost.category.icon}</div>
+                          <h3 className="text-3xl font-bold mb-3 drop-shadow-lg">{featuredPost.category.name}</h3>
+                          <p className="text-white/90 text-lg">精选内容</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="md:w-1/2 p-10">
                     <div className="flex items-center mb-6">
@@ -182,15 +200,27 @@ const HomePage: FC = async () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               {recentPosts.map((post) => (
                 <article key={post.id} className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 border border-white/20 group hover:-translate-y-2">
-                  {post.category && (
-                    <div 
-                      className="h-40 rounded-xl mb-6 flex items-center justify-center relative overflow-hidden"
-                      style={{ backgroundColor: post.category.color || '#6b7280' }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent"></div>
-                      <span className="text-white text-4xl relative z-10 drop-shadow-lg">{post.category.icon}</span>
-                    </div>
-                  )}
+                  {/* 封面图片或分类背景 */}
+                  <div 
+                    className="h-40 rounded-xl mb-6 flex items-center justify-center relative overflow-hidden"
+                    style={{ backgroundColor: post.category?.color || '#6b7280' }}
+                  >
+                    {post.coverImage ? (
+                      <>
+                        <img 
+                          src={post.coverImage} 
+                          alt={post.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent"></div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent"></div>
+                        <span className="text-white text-4xl relative z-10 drop-shadow-lg">{post.category?.icon || '📝'}</span>
+                      </>
+                    )}
+                  </div>
                   {post.category && (
                     <div className="flex items-center mb-4">
                       <span 

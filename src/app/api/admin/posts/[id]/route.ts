@@ -76,7 +76,8 @@ export async function PUT(
       isPublished,
       metaTitle,
       metaDescription,
-      metaKeywords
+      metaKeywords,
+      coverImage
     } = body
 
     // 验证必填字段
@@ -128,6 +129,7 @@ export async function PUT(
         excerpt: excerpt || content.substring(0, 200) + '...',
         content,
         htmlContent: content, // 这里可以添加Markdown转HTML的逻辑
+        coverImage,
         isPublished,
         publishedAt: isPublished && !existingPost.isPublished ? new Date() : existingPost.publishedAt,
         readingTime: calculateReadingTime(content),

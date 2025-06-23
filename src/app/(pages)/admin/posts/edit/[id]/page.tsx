@@ -29,6 +29,7 @@ interface Post {
   metaDescription: string
   metaKeywords: string
   slug: string
+  coverImage: string
 }
 
 const EditPostPage: FC = () => {
@@ -51,7 +52,8 @@ const EditPostPage: FC = () => {
     isPublished: false,
     metaTitle: '',
     metaDescription: '',
-    metaKeywords: ''
+    metaKeywords: '',
+    coverImage: ''
   })
 
   // 获取分类列表
@@ -86,7 +88,8 @@ const EditPostPage: FC = () => {
             isPublished: data.isPublished,
             metaTitle: data.metaTitle || '',
             metaDescription: data.metaDescription || '',
-            metaKeywords: data.metaKeywords || ''
+            metaKeywords: data.metaKeywords || '',
+            coverImage: data.coverImage || ''
           })
         } else {
           alert('获取文章失败')
@@ -169,6 +172,45 @@ const EditPostPage: FC = () => {
       ...prev,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
     }))
+  }
+
+  // 处理封面图片上传
+  const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // 检查文件类型
+    if (!file.type.startsWith('image/')) {
+      alert('请选择图片文件')
+      return
+    }
+
+    // 检查文件大小（限制为5MB）
+    if (file.size > 5 * 1024 * 1024) {
+      alert('图片大小不能超过5MB')
+      return
+    }
+
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        setFormData(prev => ({ ...prev, coverImage: result.url }))
+      } else {
+        const error = await response.json()
+        alert(error.message || '上传失败')
+      }
+    } catch (error) {
+      console.error('上传失败:', error)
+      alert('上传失败，请重试')
+    }
   }
 
   if (isLoading) {
@@ -293,6 +335,56 @@ const EditPostPage: FC = () => {
               />
             </div>
 
+            {/* 封面图片 */}
+            <div className="mt-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                封面图片
+              </label>
+              <div className="space-y-4">
+                {/* 图片预览 */}
+                {formData.coverImage && (
+                  <div className="relative">
+                    <img
+                      src={formData.coverImage}
+                      alt="封面预览"
+                      className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, coverImage: '' }))}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
+                    >
+                      ×
+                    </button>
+                  </div>
+                )}
+                
+                {/* 上传按钮 */}
+                <div className="flex items-center space-x-4">
+                  <label className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    选择图片
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleCoverImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                  {formData.coverImage && (
+                    <span className="text-sm text-gray-500">
+                      已选择封面图片
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500">
+                  支持 JPG、PNG、GIF 格式，文件大小不超过 5MB
+                </p>
+              </div>
+            </div>
+
             {/* 发布状态 */}
             <div className="mt-6">
               <label className="flex items-center">
@@ -303,7 +395,7 @@ const EditPostPage: FC = () => {
                   onChange={handleInputChange}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <span className="ml-2 text-sm text-gray-700">发布文章</span>
+                <span className="ml-2 text-sm text-gray-700">立即发布</span>
               </label>
             </div>
           </div>

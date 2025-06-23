@@ -8,6 +8,7 @@ interface Post {
   id: string
   title: string
   excerpt: string
+  coverImage?: string | null
   category?: {
     id: string
     name: string
@@ -109,6 +110,9 @@ const AdminPostsPage: FC = () => {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    封面
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     标题
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -128,6 +132,21 @@ const AdminPostsPage: FC = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {posts.map((post) => (
                   <tr key={post.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex-shrink-0 h-12 w-16">
+                        {post.coverImage ? (
+                          <img
+                            src={post.coverImage}
+                            alt={post.title}
+                            className="h-12 w-16 object-cover rounded"
+                          />
+                        ) : (
+                          <div className="h-12 w-16 bg-gray-200 rounded flex items-center justify-center">
+                            <span className="text-gray-400 text-xs">无封面</span>
+                          </div>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div>
