@@ -29,7 +29,8 @@ export async function getFeaturedPost() {
           id: true,
           name: true,
           color: true,
-          icon: true
+          icon: true,
+          slug: true
         }
       },
       _count: {
@@ -64,7 +65,8 @@ export async function getRecentPosts(limit: number = 3) {
           id: true,
           name: true,
           color: true,
-          icon: true
+          icon: true,
+          slug: true
         }
       },
       _count: {
@@ -558,5 +560,72 @@ export async function getPopularTags(limit: number = 10) {
       postCount: 'desc'
     },
     take: limit
+  })
+}
+
+// 获取管理员文章列表
+export async function getPostsForAdmin() {
+  return await prisma.post.findMany({
+    where: {
+      isDeleted: false
+    },
+    include: {
+      author: {
+        select: {
+          id: true,
+          displayName: true,
+          avatar: true
+        }
+      },
+      category: {
+        select: {
+          id: true,
+          name: true,
+          color: true,
+          icon: true
+        }
+      },
+      _count: {
+        select: {
+          likes: true,
+          comments: true
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
+  })
+}
+
+// 根据ID获取文章（用于编辑）
+export async function getPostById(id: string) {
+  return await prisma.post.findUnique({
+    where: {
+      id: id,
+      isDeleted: false
+    },
+    include: {
+      category: {
+        select: {
+          id: true,
+          name: true,
+          color: true,
+          icon: true
+        }
+      },
+      tags: {
+        include: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              color: true
+            }
+          }
+        }
+      }
+    }
   })
 } 
