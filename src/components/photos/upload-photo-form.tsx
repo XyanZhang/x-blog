@@ -90,7 +90,7 @@ export default function UploadPhotoForm() {
       } else {
         setMessage(data.error || '上传失败');
       }
-    } catch (error) {
+    } catch {
       setMessage('上传失败，请重试');
     } finally {
       setUploading(false);
@@ -213,7 +213,7 @@ export default function UploadPhotoForm() {
             )}
             {selectedFile && !uploadedMedia && (
               <p className="mt-1 text-sm text-orange-600 dark:text-orange-400">
-                ⚠️ 请先点击"上传文件"按钮上传图片
+                ⚠️ 请先点击&quot;上传文件&quot;按钮上传图片
               </p>
             )}
           </div>
@@ -417,9 +417,20 @@ export default function UploadPhotoForm() {
         
         {!uploadedMedia && selectedFile && (
           <p className="text-center text-sm text-orange-600 dark:text-orange-400">
-            请先点击"上传文件"按钮上传图片，然后才能保存图片信息
+            请先点击&quot;上传文件&quot;按钮上传图片，然后才能保存图片信息
           </p>
         )}
+
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          支持 JPG、PNG、GIF 格式，最大 10MB
+        </p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          建议尺寸：1920x1080 或更高
+        </p>
+
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          添加标签可以帮助其他用户更好地发现你的作品
+        </p>
       </form>
     </div>
   );

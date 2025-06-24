@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { FileQuestion, ArrowLeft, Home } from 'lucide-react'
+import { FileQuestion, Home } from 'lucide-react'
 
 export default function PostNotFound() {
   return (

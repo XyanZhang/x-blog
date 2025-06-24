@@ -94,19 +94,11 @@ export async function generateMetadata({ params }: PostDetailPageProps): Promise
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('zh-CN', {
     year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
     hour: '2-digit',
     minute: '2-digit'
   }).format(new Date(date))
-}
-
-// 阅读时间估算
-function getReadingTime(content: string): string {
-  const wordsPerMinute = 200
-  const words = content.length / 2 // 中文字符估算
-  const minutes = Math.ceil(words / wordsPerMinute)
-  return `${minutes} 分钟阅读`
 }
 
 const PostDetailPage: FC<PostDetailPageProps> = async ({ params }) => {

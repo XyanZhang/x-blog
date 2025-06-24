@@ -4,7 +4,6 @@ import { Metadata } from 'next'
 import { Calendar, Eye, Heart, MessageCircle, Search, Filter } from 'lucide-react'
 
 import { getRecentPosts, getCategories, getPopularTags } from '@/lib/db'
-import type { PostWithDetails, CategoryWithCount, TagWithCount } from '@/types/blog'
 
 export const metadata: Metadata = {
   title: '所有文章 - Z~Blog',

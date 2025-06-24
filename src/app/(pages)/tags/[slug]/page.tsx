@@ -16,7 +16,6 @@ import {
 } from 'lucide-react'
 
 import { getPostsByTag, getTagsWithStats } from '@/lib/db'
-import type { TagPageData } from '@/types/blog'
 
 interface TagPageProps {
   params: Promise<{

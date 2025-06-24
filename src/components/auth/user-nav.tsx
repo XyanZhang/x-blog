@@ -98,7 +98,11 @@ const UserNav: FC = () => {
       >
         <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
           {user.avatar ? (
-            <img src={user.avatar} alt={getDisplayName()} className="w-full h-full rounded-full" />
+            <img
+              src={user.avatar || '/api/avatar'}
+              alt={user.displayName || '用户头像'}
+              className="h-8 w-8 rounded-full"
+            />
           ) : (
             getAvatarLetter()
           )}

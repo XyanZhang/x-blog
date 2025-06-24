@@ -114,9 +114,12 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json(post, { status: 201 })
-  } catch (error) {
-    console.error('创建文章失败:', error)
-    return NextResponse.json({ message: '创建文章失败' }, { status: 500 })
+  } catch (error: unknown) {
+    console.error('Error creating post:', error)
+    return NextResponse.json(
+      { error: 'Failed to create post' },
+      { status: 500 }
+    )
   }
 }
 
@@ -138,7 +141,11 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit
 
     // 构建查询条件
-    const where: any = {
+    const where: {
+      isDeleted: boolean;
+      categoryId?: string;
+      isPublished?: boolean;
+    } = {
       isDeleted: false
     }
 
@@ -195,7 +202,7 @@ export async function GET(request: NextRequest) {
         pages: Math.ceil(total / limit)
       }
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('获取文章列表失败:', error)
     return NextResponse.json({ message: '获取文章列表失败' }, { status: 500 })
   }

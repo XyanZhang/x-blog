@@ -72,9 +72,25 @@ export default async function AlbumPage({ params }: AlbumPageProps) {
     notFound();
   }
 
+  // 修正类型：为每个 photo 增加 imageUrl 字段和 isFeatured 字段
+  const albumWithImageUrl = {
+    ...album,
+    photos: album.photos.map(photo => ({
+      id: photo.id,
+      title: photo.title ?? '',
+      description: photo.description,
+      imageUrl: photo.media?.url || '',
+      createdAt: photo.createdAt,
+      isFeatured: photo.isFeatured ?? false,
+      location: photo.location ?? '',
+      viewCount: photo.viewCount ?? 0,
+      likeCount: photo.likeCount ?? 0,
+    })),
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <AlbumDetail album={album} />
+      <AlbumDetail album={albumWithImageUrl} onClose={() => {}} />
     </div>
   );
 } 

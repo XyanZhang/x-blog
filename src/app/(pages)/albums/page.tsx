@@ -20,7 +20,9 @@ export default function AlbumsPage() {
         </p>
       </div>
 
-      <AlbumSearch />
+      <Suspense fallback={null}>
+        <AlbumSearch />
+      </Suspense>
       
       <Suspense fallback={<AlbumGridSkeleton />}>
         <AlbumGrid />

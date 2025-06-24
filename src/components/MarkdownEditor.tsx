@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useState, useEffect } from 'react'
+import { FC, useState } from 'react'
 import { Bold, Italic, List, ListOrdered, Quote, Code, Link, Image, Eye, EyeOff } from 'lucide-react'
 import MarkdownRenderer from './MarkdownRenderer'
 

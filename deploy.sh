@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Next.js 项目部署脚本
-# 适用于 Ubuntu/Debian 服务器
+# 适用于 Ubuntu/Debian 服务器，支持IP访问
 
 set -e
 
@@ -56,14 +56,15 @@ if [ ! -f ".env.local" ]; then
 # 数据库配置
 DATABASE_URL="file:./blog.db"
 
-# NextAuth 配置
-NEXTAUTH_URL="https://yourdomain.com"
-NEXTAUTH_SECRET="your-secret-key-here"
+# NextAuth 配置（使用IP地址）
+NEXTAUTH_URL="http://$(curl -s ifconfig.me):3000"
+NEXTAUTH_SECRET="$(openssl rand -base64 32)"
 
 # 其他配置
 NODE_ENV="production"
 EOF
     echo "⚠️  请编辑 .env.local 文件，设置正确的环境变量"
+    echo "📝 当前服务器IP: $(curl -s ifconfig.me)"
 fi
 
 # 构建项目
@@ -84,4 +85,5 @@ pm2 startup
 echo "✅ 部署完成！"
 echo "📊 查看应用状态: pm2 status"
 echo "📝 查看日志: pm2 logs my-next"
-echo "🌐 应用运行在: http://localhost:3000" 
+echo "🌐 应用运行在: http://$(curl -s ifconfig.me):3000"
+echo "🔧 如需通过Nginx访问，请配置Nginx反向代理" 

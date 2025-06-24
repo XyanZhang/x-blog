@@ -15,7 +15,25 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // 构建查询条件
-    const where: any = {};
+    const where: {
+      albumId?: string;
+      album?: {
+        isPublished: boolean;
+        isPrivate: boolean;
+      };
+      OR?: Array<{
+        albumId?: null;
+        album?: {
+          isPublished: boolean;
+          isPrivate: boolean;
+        };
+        title?: { contains: string; mode: 'insensitive' };
+        description?: { contains: string; mode: 'insensitive' };
+        location?: { contains: string; mode: 'insensitive' };
+        tags?: { contains: string; mode: 'insensitive' };
+      }>;
+      isFeatured?: boolean;
+    } = {};
 
     if (albumId) {
       where.albumId = albumId;
@@ -216,7 +234,7 @@ export async function POST(request: NextRequest) {
 
     console.log('Photo created successfully:', photo.id);
     return NextResponse.json(photo, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error creating photo:', error);
     return NextResponse.json(
       { error: 'Failed to create photo' },

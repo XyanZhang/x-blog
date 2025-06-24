@@ -6,9 +6,11 @@ import { calculateReadingTime } from '@/lib/db'
 // 获取单个文章
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+    
     // 验证用户登录
     const user = await getUserFromRequest(request)
     if (!user) {
@@ -17,7 +19,7 @@ export async function GET(
 
     const post = await prisma.post.findUnique({
       where: {
-        id: params.id,
+        id,
         isDeleted: false
       },
       include: {
@@ -58,9 +60,11 @@ export async function GET(
 // 更新文章
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+    
     // 验证用户登录
     const user = await getUserFromRequest(request)
     if (!user) {
@@ -88,7 +92,7 @@ export async function PUT(
     // 检查文章是否存在
     const existingPost = await prisma.post.findUnique({
       where: {
-        id: params.id,
+        id,
         isDeleted: false
       }
     })
@@ -125,7 +129,7 @@ export async function PUT(
       const slugExists = await prisma.post.findFirst({
         where: {
           slug,
-          id: { not: params.id },
+          id: { not: id },
           isDeleted: false
         }
       })
@@ -139,7 +143,7 @@ export async function PUT(
         const existingWithNewSlug = await prisma.post.findFirst({
           where: {
             slug,
-            id: { not: params.id },
+            id: { not: id },
             isDeleted: false
           }
         })
@@ -152,7 +156,7 @@ export async function PUT(
 
     // 更新文章
     const updatedPost = await prisma.post.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title,
         slug,
@@ -202,9 +206,11 @@ export async function PUT(
 // 删除文章
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+    
     // 验证用户登录
     const user = await getUserFromRequest(request)
     if (!user) {
@@ -214,7 +220,7 @@ export async function DELETE(
     // 检查文章是否存在
     const existingPost = await prisma.post.findUnique({
       where: {
-        id: params.id,
+        id,
         isDeleted: false
       }
     })
@@ -225,7 +231,7 @@ export async function DELETE(
 
     // 软删除文章
     await prisma.post.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         isDeleted: true,
         deletedAt: new Date()

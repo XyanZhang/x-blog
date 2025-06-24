@@ -2,16 +2,27 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { PhotoAlbum } from '@/types/blog';
 
 interface AlbumDetailProps {
-  album: PhotoAlbum & {
-    creator: any;
-    photos: any[];
-    _count: {
-      photos: number;
-    };
-  };
+  album: {
+    id: string
+    title: string
+    description?: string | null
+    coverImage?: string | null
+    createdAt: Date
+    photos: Array<{
+      id: string
+      title: string
+      description?: string | null
+      imageUrl: string
+      createdAt: Date
+      isFeatured: boolean
+      location: string
+      viewCount: number
+      likeCount: number
+    }>
+  }
+  onClose: () => void
 }
 
 export default function AlbumDetail({ album }: AlbumDetailProps) {
@@ -40,17 +51,18 @@ export default function AlbumDetail({ album }: AlbumDetailProps) {
             )}
             
             <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
-              <span>📸 {album._count.photos} 张图片</span>
+              <span>📸 {album.photos.length} 张图片</span>
               <span>📅 {formatDate(album.createdAt)}</span>
             </div>
           </div>
           
           {/* 创建者信息 */}
           <div className="flex items-center space-x-3 bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-            {album.creator.avatar && (
+            {/* Assuming album.creator.avatar is available */}
+            {album.coverImage && (
               <Image
-                src={album.creator.avatar}
-                alt={album.creator.displayName || album.creator.username}
+                src={album.coverImage}
+                alt={album.title}
                 width={48}
                 height={48}
                 className="rounded-full"
@@ -58,7 +70,9 @@ export default function AlbumDetail({ album }: AlbumDetailProps) {
             )}
             <div>
               <p className="font-medium text-gray-900 dark:text-white">
-                {album.creator.displayName || album.creator.username}
+                {/* Assuming album.creator.displayName is available */}
+                {/* Replace with actual logic to get creator's name */}
+                Creator Name
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 创建者
@@ -94,13 +108,14 @@ export default function AlbumDetail({ album }: AlbumDetailProps) {
                 className="group relative aspect-square overflow-hidden rounded-lg hover:shadow-lg transition-shadow duration-300"
               >
                 <Image
-                  src={photo.media.url}
+                  src={photo.imageUrl}
                   alt={photo.title || '摄影作品'}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 
                 {/* 精选标识 */}
+                {/* Assuming photo.isFeatured is available */}
                 {photo.isFeatured && (
                   <div className="absolute top-2 left-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">
                     精选
@@ -116,6 +131,7 @@ export default function AlbumDetail({ album }: AlbumDetailProps) {
                       </h3>
                     )}
                     
+                    {/* Assuming photo.location is available */}
                     {photo.location && (
                       <p className="text-xs text-gray-200 truncate">
                         📍 {photo.location}

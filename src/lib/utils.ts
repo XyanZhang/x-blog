@@ -44,9 +44,9 @@ export const getRandListData = <T>(list: T[]) => {
     for (let i = 0; i < getRandomMin(list.length); i++) {
         const random = getRandItemData<T>(list);
         const canPush = !result.find((item) => {
-            if ('id' in (random as Record<string, any>)) {
-                const check = random as Record<string, any>;
-                const current = item as Record<string, any>;
+            if ('id' in (random as Record<string, unknown>)) {
+                const check = random as Record<string, unknown>;
+                const current = item as Record<string, unknown>;
                 return current.id === check.id;
             }
             return item === random;
@@ -55,3 +55,34 @@ export const getRandListData = <T>(list: T[]) => {
     }
     return result;
 };
+
+// 格式化日期
+export function formatDate(date: Date | string | number): string {
+  const d = new Date(date)
+  return d.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
+}
+
+// 格式化时间
+export function formatTime(date: Date | string | number): string {
+  const d = new Date(date)
+  return d.toLocaleTimeString('zh-CN', {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
+// 格式化日期时间
+export function formatDateTime(date: Date | string | number): string {
+  const d = new Date(date)
+  return d.toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}

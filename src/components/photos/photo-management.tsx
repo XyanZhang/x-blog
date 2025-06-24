@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import CreateAlbumForm from './create-album-form';
 import UploadPhotoForm from './upload-photo-form';
@@ -11,11 +11,7 @@ export default function PhotoManagement() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     try {
       const response = await fetch('/api/auth/me');
       if (response.ok) {
@@ -23,12 +19,16 @@ export default function PhotoManagement() {
       } else {
         router.push('/auth/login');
       }
-    } catch (error) {
+    } catch {
       router.push('/auth/login');
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   if (loading) {
     return <div>Loading...</div>;

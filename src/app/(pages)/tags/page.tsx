@@ -22,8 +22,11 @@ async function getTagsPageData(): Promise<TagsPageData> {
     getBlogStats()
   ])
 
+  // 过滤掉没有文章的标签
+  const activeTags = tags.filter(tag => tag._count.posts > 0)
+
   return {
-    tags,
+    tags: activeTags,
     totalPosts: stats.totalPosts
   }
 }
@@ -34,7 +37,6 @@ const TagsPage: FC = async () => {
   // 根据使用频率分组标签
   const hotTags = tags.filter(tag => tag._count.posts >= 2)
   const normalTags = tags.filter(tag => tag._count.posts === 1)
-  const unusedTags = tags.filter(tag => tag._count.posts === 0)
 
   return (
     <div className="min-h-screen bg-gray-50">

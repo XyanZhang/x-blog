@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PhotoAlbum } from '@/types/blog';
@@ -21,11 +21,7 @@ export default function AlbumGrid({ searchParams }: AlbumGridProps) {
     total: 0,
   });
 
-  useEffect(() => {
-    fetchAlbums();
-  }, [searchParams]);
-
-  const fetchAlbums = async () => {
+  const fetchAlbums = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -50,7 +46,11 @@ export default function AlbumGrid({ searchParams }: AlbumGridProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchParams]);
+
+  useEffect(() => {
+    fetchAlbums();
+  }, [fetchAlbums]);
 
   if (loading) {
     return (
@@ -97,7 +97,7 @@ export default function AlbumGrid({ searchParams }: AlbumGridProps) {
                 />
               ) : album.photos.length > 0 ? (
                 <div className={`grid ${getGridClass(album.photos.length)} gap-1 h-full`}>
-                  {album.photos.slice(0, Math.min(album.photos.length, 4)).map((photo, index) => (
+                  {album.photos.slice(0, Math.min(album.photos.length, 4)).map((photo) => (
                     <div key={photo.id} className="relative">
                       <Image
                         src={photo.media.url}

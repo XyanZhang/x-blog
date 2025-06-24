@@ -18,7 +18,7 @@ export default function CreateAlbumForm() {
   });
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadedMedia, setUploadedMedia] = useState<Media | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
@@ -60,7 +60,7 @@ export default function CreateAlbumForm() {
       } else {
         setMessage(data.error || '上传失败');
       }
-    } catch (error) {
+    } catch {
       setMessage('上传失败，请重试');
     } finally {
       setUploading(false);
@@ -84,8 +84,6 @@ export default function CreateAlbumForm() {
         }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
         setMessage('图册创建成功！');
         setFormData({
@@ -101,10 +99,11 @@ export default function CreateAlbumForm() {
           fileInputRef.current.value = '';
         }
       } else {
-        setMessage(data.error || '创建失败');
+        const errorData = await response.json();
+        setMessage(errorData.error || '创建失败');
       }
-    } catch (error) {
-      setMessage('创建失败，请重试');
+    } catch {
+      setMessage('网络错误，请稍后重试');
     } finally {
       setLoading(false);
     }

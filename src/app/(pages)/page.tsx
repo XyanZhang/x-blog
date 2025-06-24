@@ -1,7 +1,7 @@
 // src/app/(pages)/page.tsx
 import { FC } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Calendar, User, Sparkles, BookOpen, Camera, ChevronDown } from 'lucide-react'
+import { ArrowRight, Calendar, User, Sparkles, BookOpen, Camera } from 'lucide-react'
 
 import { getFeaturedPost, getRecentPosts, getCategories } from '@/lib/db'
 import type { HomePageData } from '@/types/blog'

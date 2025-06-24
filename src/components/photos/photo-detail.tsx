@@ -3,14 +3,49 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Photo } from '@/types/blog';
 
 interface PhotoDetailProps {
-  photo: Photo & {
-    media: any;
-    album: any;
-    postPhotos: any[];
-  };
+  photo: {
+    id: string
+    title: string
+    description?: string | null
+    imageUrl: string
+    location?: string | null
+    tags?: string[]
+    createdAt: Date
+    album?: {
+      id: string
+      title: string
+      slug: string
+      coverImage?: string | null
+      creator: {
+        displayName: string
+        username: string
+      }
+    } | null
+    isFeatured: boolean
+    viewCount: number
+    likeCount: number
+    camera?: string | null
+    lens?: string | null
+    settings?: string | null
+    postPhotos: Array<{
+      id: string
+      post: {
+        id: string
+        title: string
+        slug: string
+        coverImage?: string | null
+        excerpt?: string | null
+        author: {
+          displayName: string
+          username: string
+          avatar?: string | null
+        }
+      }
+    }>
+  }
+  onClose: () => void
 }
 
 export default function PhotoDetail({ photo }: PhotoDetailProps) {
@@ -36,7 +71,7 @@ export default function PhotoDetail({ photo }: PhotoDetailProps) {
         <div className="space-y-4">
           <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
             <Image
-              src={photo.media.url}
+              src={photo.imageUrl}
               alt={photo.title || '摄影作品'}
               fill
               className="object-contain"
@@ -104,11 +139,11 @@ export default function PhotoDetail({ photo }: PhotoDetailProps) {
                 </div>
               )}
               
-              {photo.takenAt && (
+              {photo.createdAt && (
                 <div>
                   <span className="text-gray-500 dark:text-gray-400">📅 拍摄时间：</span>
                   <span className="text-gray-900 dark:text-white">
-                    {formatDate(photo.takenAt)}
+                    {formatDate(photo.createdAt)}
                   </span>
                 </div>
               )}
@@ -174,7 +209,7 @@ export default function PhotoDetail({ photo }: PhotoDetailProps) {
                 标签
               </h3>
               <div className="flex flex-wrap gap-2">
-                {photo.tags.split(',').map((tag, index) => (
+                {photo.tags.map((tag, index) => (
                   <span
                     key={index}
                     className="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm"

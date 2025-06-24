@@ -244,7 +244,12 @@ export async function getPostBySlug(slug: string) {
 
 // 获取相关文章
 export async function getRelatedPosts(currentPostId: string, categoryId: string | null, limit: number = 3) {
-  const where: any = {
+  const where: {
+    id: { not: string };
+    isPublished: boolean;
+    isDeleted: boolean;
+    categoryId?: string;
+  } = {
     id: {
       not: currentPostId
     },
@@ -299,7 +304,7 @@ export async function incrementPostViews(postId: string) {
         }
       }
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to increment post views:', error)
   }
 }

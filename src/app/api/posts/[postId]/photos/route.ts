@@ -5,10 +5,10 @@ import { getUserFromRequest } from '@/lib/auth';
 // 获取文章关联的图片
 export async function GET(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: { params: Promise<{ postId: string }> }
 ) {
   try {
-    const { postId } = params;
+    const { postId } = await params;
 
     const postPhotos = await prisma.postPhoto.findMany({
       where: { postId },
@@ -49,7 +49,7 @@ export async function GET(
 // 关联图片到文章
 export async function POST(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: { params: Promise<{ postId: string }> }
 ) {
   try {
     const user = await getUserFromRequest(request);
@@ -60,7 +60,7 @@ export async function POST(
       );
     }
 
-    const { postId } = params;
+    const { postId } = await params;
     const body = await request.json();
     const { photoId, sortOrder = 0 } = body;
 
@@ -152,7 +152,7 @@ export async function POST(
 // 删除图片与文章的关联
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: { params: Promise<{ postId: string }> }
 ) {
   try {
     const user = await getUserFromRequest(request);
@@ -163,7 +163,7 @@ export async function DELETE(
       );
     }
 
-    const { postId } = params;
+    const { postId } = await params;
     const { searchParams } = new URL(request.url);
     const photoId = searchParams.get('photoId');
 

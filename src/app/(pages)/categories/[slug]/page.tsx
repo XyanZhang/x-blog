@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import Link from 'next/link'
-import { Metadata } from 'next/metadata'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { 
   ArrowLeft, 
@@ -14,8 +14,7 @@ import {
   ChevronRight
 } from 'lucide-react'
 
-import { getPostsByCategory, getCategoriesWithStats } from '@/lib/db'
-import type { CategoryPageData } from '@/types/blog'
+import { getCategoriesWithStats, getPostsByCategory } from '@/lib/db'
 
 interface CategoryPageProps {
   params: Promise<{

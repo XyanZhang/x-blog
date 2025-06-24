@@ -54,32 +54,22 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
   // 监听滚动，高亮当前标题
   useEffect(() => {
     const handleScroll = () => {
-      const headingElements = tocItems.map(item => 
-        document.getElementById(item.id)
-      ).filter(Boolean)
-
-      const scrollTop = window.scrollY
-      const windowHeight = window.innerHeight
-
-      for (let i = headingElements.length - 1; i >= 0; i--) {
-        const element = headingElements[i]
-        if (element) {
-          const rect = element.getBoundingClientRect()
-          if (rect.top <= windowHeight * 0.3) {
-            setActiveId(tocItems[i].id)
-            break
-          }
+      const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6')
+      let currentHeading = ''
+      
+      headings.forEach((heading) => {
+        const rect = heading.getBoundingClientRect()
+        if (rect.top <= 100) {
+          currentHeading = heading.id
         }
-      }
+      })
+      
+      setActiveId(currentHeading)
     }
-
+    
     window.addEventListener('scroll', handleScroll)
-    handleScroll() // 初始检查
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [tocItems])
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // 点击跳转到对应标题
   const scrollToHeading = (id: string) => {

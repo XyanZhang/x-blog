@@ -4,7 +4,6 @@ import { FC, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Save, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import dynamic from 'next/dynamic'
-import { getCategories } from '@/lib/db'
 
 // 动态导入Markdown编辑器以避免SSR问题
 const MarkdownEditor = dynamic(() => import('@/components/MarkdownEditor'), {

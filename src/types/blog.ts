@@ -1,4 +1,4 @@
-import { Post, User, Category, Comment, PostLike, Tag, PostTag } from '@prisma/client'
+import { Post, User, Category, Comment, Tag } from '@prisma/client'
 
 // 扩展的文章类型
 export type PostWithDetails = Post & {

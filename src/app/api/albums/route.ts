@@ -14,7 +14,15 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // 构建查询条件
-    const where: any = {
+    const where: {
+      isPublished: boolean;
+      isPrivate: boolean;
+      OR?: Array<{
+        title?: { contains: string; mode: 'insensitive' };
+        description?: { contains: string; mode: 'insensitive' };
+      }>;
+      creatorId?: string;
+    } = {
       isPublished: true,
       isPrivate: false,
     };
@@ -147,7 +155,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(album, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error creating album:', error);
     return NextResponse.json(
       { error: 'Failed to create album' },

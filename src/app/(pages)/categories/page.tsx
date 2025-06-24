@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import Link from 'next/link'
-import { Metadata } from 'next/metadata'
-import { Folder, FileText, TrendingUp, Calendar } from 'lucide-react'
+import { Metadata } from 'next'
+import { Folder, FileText } from 'lucide-react'
 
 import { getCategoriesWithStats, getBlogStats } from '@/lib/db'
 import type { CategoriesPageData } from '@/types/blog'

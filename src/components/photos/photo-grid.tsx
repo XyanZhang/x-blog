@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Photo } from '@/types/blog';
@@ -23,11 +23,7 @@ export default function PhotoGrid({ searchParams }: PhotoGridProps) {
     total: 0,
   });
 
-  useEffect(() => {
-    fetchPhotos();
-  }, [searchParams]);
-
-  const fetchPhotos = async () => {
+  const fetchPhotos = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -60,7 +56,11 @@ export default function PhotoGrid({ searchParams }: PhotoGridProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchParams]);
+
+  useEffect(() => {
+    fetchPhotos();
+  }, [fetchPhotos]);
 
   if (loading) {
     return (

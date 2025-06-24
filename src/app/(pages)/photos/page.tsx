@@ -20,7 +20,9 @@ export default function PhotosPage() {
         </p>
       </div>
 
-      <PhotoSearch />
+      <Suspense fallback={null}>
+        <PhotoSearch />
+      </Suspense>
       
       <Suspense fallback={<PhotoGridSkeleton />}>
         <PhotoGrid />

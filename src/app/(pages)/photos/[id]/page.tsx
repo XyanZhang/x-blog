@@ -104,9 +104,52 @@ export default async function PhotoPage({ params }: PhotoPageProps) {
     },
   });
 
+  // 转换照片数据以匹配 PhotoDetail 组件的期望结构
+  const transformedPhoto = {
+    id: photo.id,
+    title: photo.title || '',
+    description: photo.description,
+    imageUrl: photo.media.url,
+    location: photo.location,
+    tags: photo.tags ? photo.tags.split(',').map(tag => tag.trim()) : [],
+    createdAt: photo.createdAt,
+    album: photo.album ? {
+      id: photo.album.id,
+      title: photo.album.title,
+      slug: photo.album.slug,
+      creator: {
+        displayName: photo.album.creator.displayName || photo.album.creator.username,
+        username: photo.album.creator.username,
+      },
+      coverImage: photo.album.coverImage
+    } : null,
+    likeCount: photo.likeCount || 0,
+    viewCount: photo.viewCount || 0,
+    isFeatured: photo.isFeatured || false,
+    camera: photo.camera,
+    lens: photo.lens,
+    settings: photo.settings,
+    postPhotos: photo.postPhotos.map(postPhoto => ({
+      id: postPhoto.id,
+      post: {
+        id: postPhoto.post.id,
+        title: postPhoto.post.title,
+        slug: postPhoto.post.slug,
+        excerpt: postPhoto.post.excerpt,
+        coverImage: postPhoto.post.coverImage,
+        author: {
+          id: postPhoto.post.author.id,
+          username: postPhoto.post.author.username,
+          displayName: postPhoto.post.author.displayName || postPhoto.post.author.username,
+          avatar: postPhoto.post.author.avatar,
+        },
+      },
+    })),
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <PhotoDetail photo={photo} />
+      <PhotoDetail photo={transformedPhoto} onClose={() => {}} />
     </div>
   );
 } 
