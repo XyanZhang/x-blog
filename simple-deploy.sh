@@ -31,7 +31,7 @@ if ! command -v pm2 &> /dev/null; then
 fi
 
 # 创建应用目录
-APP_DIR="/var/www/my-next"
+APP_DIR="/var/www/x-blog"
 echo "📁 创建应用目录: $APP_DIR"
 sudo mkdir -p $APP_DIR
 sudo chown $USER:$USER $APP_DIR
