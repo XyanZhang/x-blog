@@ -2,7 +2,8 @@ module.exports = {
   apps: [
     {
       name: 'my-next',
-      script: '.next/standalone/server.js',
+      script: 'npm',
+      args: 'start',
       cwd: '/var/www/x-blog',
       env: {
         NODE_ENV: 'production',

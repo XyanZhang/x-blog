@@ -171,9 +171,29 @@ else
     echo "✅ 找到server.js文件: .next/standalone/server.js"
 fi
 
+# 修复静态资源问题
+echo "🔧 修复静态资源问题..."
+if [ ! -d ".next/standalone/.next/static" ] && [ -d ".next/static" ]; then
+    echo "📝 复制静态资源..."
+    mkdir -p .next/standalone/.next/static
+    cp -r .next/static/* .next/standalone/.next/static/
+    echo "✅ 静态资源已复制"
+else
+    echo "✅ 静态资源已存在"
+fi
+
+# 复制public目录
+if [ -d "public" ] && [ ! -d ".next/standalone/public" ]; then
+    echo "📝 复制public目录..."
+    cp -r public .next/standalone/
+    echo "✅ public目录已复制"
+fi
+
 # 设置文件权限
 echo "🔧 设置文件权限..."
 chmod +x .next/standalone/server.js
+chmod -R 755 .next/standalone/.next/static 2>/dev/null || true
+chmod -R 755 .next/standalone/public 2>/dev/null || true
 
 # 检查并创建数据库
 echo "🗄️  检查数据库..."
