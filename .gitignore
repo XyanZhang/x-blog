@@ -41,3 +41,17 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# Database files - 避免数据库文件被Git跟踪
+prisma/*.db
+prisma/*.db-journal
+prisma/*.sqlite
+prisma/*.sqlite3
+prisma/test.db
+prisma/dev.db
+prisma/blog.db
+
+# Prisma generated files (keep migrations)
+prisma/migrations/
+!prisma/migrations/
+prisma/schema.prisma
