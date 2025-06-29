@@ -30,6 +30,20 @@ if ! command -v pm2 &> /dev/null; then
     npm install -g pm2
 fi
 
+# 配置防火墙
+echo "🔥 配置防火墙..."
+if command -v ufw &> /dev/null; then
+    sudo ufw allow 3000/tcp
+    sudo ufw allow 5555/tcp
+    echo "✅ UFW防火墙已配置"
+elif command -v iptables &> /dev/null; then
+    sudo iptables -A INPUT -p tcp --dport 3000 -j ACCEPT
+    sudo iptables -A INPUT -p tcp --dport 5555 -j ACCEPT
+    echo "✅ iptables防火墙已配置"
+else
+    echo "⚠️  未检测到防火墙，请手动确保3000和5555端口开放"
+fi
+
 # 创建应用目录
 APP_DIR="/var/www/x-blog"
 echo "📁 创建应用目录: $APP_DIR"
@@ -67,6 +81,8 @@ NEXTAUTH_SECRET="$(openssl rand -base64 32)"
 
 # 其他配置
 NODE_ENV="production"
+HOSTNAME="0.0.0.0"
+PORT="3000"
 EOF
 
 echo "✅ 环境变量文件已创建: .env.local"
@@ -79,12 +95,40 @@ pnpm build
 echo "🗄️  运行数据库迁移..."
 pnpm db:push
 
-# 启动应用
-echo "🚀 启动应用..."
+# 停止现有进程
+echo "🛑 停止现有进程..."
 pm2 delete my-next 2>/dev/null || true
 pm2 delete prisma-studio 2>/dev/null || true
+
+# 启动应用
+echo "🚀 启动应用..."
 pm2 start ecosystem.config.js
 pm2 save
+
+# 等待应用启动
+echo "⏳ 等待应用启动..."
+sleep 5
+
+# 检查应用状态
+echo "🔍 检查应用状态..."
+if pm2 list | grep -q "my-next.*online"; then
+    echo "✅ Next.js应用启动成功"
+else
+    echo "❌ Next.js应用启动失败"
+    echo "📝 查看错误日志:"
+    pm2 logs my-next --lines 20
+    exit 1
+fi
+
+# 检查端口是否可访问
+echo "🔍 检查端口可访问性..."
+if curl -s http://localhost:3000 > /dev/null; then
+    echo "✅ 本地3000端口可访问"
+else
+    echo "❌ 本地3000端口无法访问"
+    echo "📝 查看应用日志:"
+    pm2 logs my-next --lines 10
+fi
 
 # 配置PM2开机自启
 pm2 startup 2>/dev/null || echo "⚠️  PM2开机自启配置失败，请手动运行: pm2 startup"
@@ -106,7 +150,8 @@ echo "   查看日志: pm2 logs my-next"
 echo "   查看 Prisma Studio 日志: pm2 logs prisma-studio"
 echo ""
 echo "⚠️  注意事项:"
-echo "   1. 确保服务器防火墙开放了3000和5555端口"
+echo "   1. 已自动配置防火墙开放3000和5555端口"
 echo "   2. 如果使用云服务器，请在安全组中开放3000和5555端口"
 echo "   3. Prisma Studio 仅用于开发/管理，生产环境建议关闭"
-echo "   4. 如需通过80端口访问，请配置Nginx反向代理" 
+echo "   4. 如需通过80端口访问，请配置Nginx反向代理"
+echo "   5. 如果仍然无法访问，请检查云服务器安全组设置" 

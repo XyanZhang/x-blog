@@ -2,12 +2,13 @@ module.exports = {
   apps: [
     {
       name: 'my-next',
-      script: 'npm',
-      args: 'start',
+      script: 'node',
+      args: 'server.js',
       cwd: '/var/www/x-blog',
       env: {
         NODE_ENV: 'production',
-        PORT: 3000
+        PORT: 3000,
+        HOSTNAME: '0.0.0.0'
       },
       instances: 1,
       autorestart: true,
@@ -17,7 +18,7 @@ module.exports = {
     {
       name: 'prisma-studio',
       script: 'npx',
-      args: 'prisma studio --port 5555',
+      args: 'prisma studio --port 5555 --hostname 0.0.0.0',
       cwd: '/var/www/x-blog',
       env: {
         NODE_ENV: 'production'
