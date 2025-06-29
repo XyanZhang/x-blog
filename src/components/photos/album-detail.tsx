@@ -22,7 +22,6 @@ interface AlbumDetailProps {
       likeCount: number
     }>
   }
-  onClose: () => void
 }
 
 export default function AlbumDetail({ album }: AlbumDetailProps) {

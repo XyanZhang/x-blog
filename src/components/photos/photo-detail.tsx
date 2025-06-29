@@ -31,21 +31,17 @@ interface PhotoDetailProps {
     settings?: string | null
     postPhotos: Array<{
       id: string
-      post: {
-        id: string
-        title: string
-        slug: string
-        coverImage?: string | null
-        excerpt?: string | null
-        author: {
-          displayName: string
-          username: string
-          avatar?: string | null
-        }
+      title: string
+      slug: string
+      coverImage?: string | null
+      excerpt?: string | null
+      author: {
+        displayName: string
+        username: string
+        avatar?: string | null
       }
     }>
   }
-  onClose: () => void
 }
 
 export default function PhotoDetail({ photo }: PhotoDetailProps) {
@@ -233,14 +229,14 @@ export default function PhotoDetail({ photo }: PhotoDetailProps) {
             {photo.postPhotos.map((postPhoto) => (
               <Link
                 key={postPhoto.id}
-                href={`/posts/${postPhoto.post.slug}`}
+                href={`/posts/${postPhoto.slug}`}
                 className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
               >
-                {postPhoto.post.coverImage && (
+                {postPhoto.coverImage && (
                   <div className="aspect-video relative">
                     <Image
-                      src={postPhoto.post.coverImage}
-                      alt={postPhoto.post.title}
+                      src={postPhoto.coverImage}
+                      alt={postPhoto.title}
                       fill
                       className="object-cover"
                     />
@@ -248,24 +244,24 @@ export default function PhotoDetail({ photo }: PhotoDetailProps) {
                 )}
                 <div className="p-4">
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
-                    {postPhoto.post.title}
+                    {postPhoto.title}
                   </h3>
-                  {postPhoto.post.excerpt && (
+                  {postPhoto.excerpt && (
                     <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-                      {postPhoto.post.excerpt}
+                      {postPhoto.excerpt}
                     </p>
                   )}
                   <div className="flex items-center space-x-2 mt-3 text-sm text-gray-500 dark:text-gray-400">
-                    {postPhoto.post.author.avatar && (
+                    {postPhoto.author.avatar && (
                       <Image
-                        src={postPhoto.post.author.avatar}
-                        alt={postPhoto.post.author.displayName || postPhoto.post.author.username}
+                        src={postPhoto.author.avatar}
+                        alt={postPhoto.author.displayName || postPhoto.author.username}
                         width={20}
                         height={20}
                         className="rounded-full"
                       />
                     )}
-                    <span>{postPhoto.post.author.displayName || postPhoto.post.author.username}</span>
+                    <span>{postPhoto.author.displayName || postPhoto.author.username}</span>
                   </div>
                 </div>
               </Link>

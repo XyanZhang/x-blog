@@ -3,6 +3,9 @@
 # 简化版 Next.js 项目部署脚本
 # 仅支持IP访问，无需域名配置
 
+# 导入工具函数
+source scripts/utils.sh
+
 set -e
 
 echo "🚀 开始简化部署 Next.js 项目..."
@@ -53,40 +56,41 @@ else
     echo "✅ PM2 已安装: $(pm2 --version | head -n1)"
 fi
 
+# 检查并安装必要工具
+check_and_install_tools
+
+# 检查项目依赖
+check_project_dependencies
+
+# 检查Prisma客户端
+check_prisma_client
+
+# 检查数据库文件
+check_database
+
+# 检查环境变量文件
+check_env_file
+
+# 检查构建文件
+check_build_files
+
+# 修复静态资源问题
+fix_static_assets
+
 # 配置防火墙
 echo "🔥 配置防火墙..."
 if command -v ufw &> /dev/null; then
-    # 检查端口是否已经开放
-    if ! sudo ufw status | grep -q "3000/tcp"; then
-        sudo ufw allow 3000/tcp
-        echo "✅ 已开放3000端口"
-    else
-        echo "✅ 3000端口已开放"
-    fi
-    if ! sudo ufw status | grep -q "5555/tcp"; then
-        sudo ufw allow 5555/tcp
-        echo "✅ 已开放5555端口"
-    else
-        echo "✅ 5555端口已开放"
-    fi
-    echo "✅ UFW防火墙已配置"
+    echo "使用 UFW 配置防火墙..."
+    sudo ufw allow 3000/tcp
+    sudo ufw allow 5555/tcp
+    echo "✅ UFW 防火墙规则已配置"
 elif command -v iptables &> /dev/null; then
-    # 检查iptables规则是否已存在
-    if ! sudo iptables -L -n | grep -q "3000"; then
-        sudo iptables -A INPUT -p tcp --dport 3000 -j ACCEPT
-        echo "✅ 已添加3000端口规则"
-    else
-        echo "✅ 3000端口规则已存在"
-    fi
-    if ! sudo iptables -L -n | grep -q "5555"; then
-        sudo iptables -A INPUT -p tcp --dport 5555 -j ACCEPT
-        echo "✅ 已添加5555端口规则"
-    else
-        echo "✅ 5555端口规则已存在"
-    fi
-    echo "✅ iptables防火墙已配置"
+    echo "使用 iptables 配置防火墙..."
+    sudo iptables -A INPUT -p tcp --dport 3000 -j ACCEPT
+    sudo iptables -A INPUT -p tcp --dport 5555 -j ACCEPT
+    echo "✅ iptables 防火墙规则已配置"
 else
-    echo "⚠️  未检测到防火墙，请手动确保3000和5555端口开放"
+    echo "⚠️  未找到防火墙工具，请手动配置端口 3000 和 5555"
 fi
 
 # 创建应用目录
@@ -185,17 +189,6 @@ else
     echo "✅ 找到server.js文件: .next/standalone/server.js"
 fi
 
-# 修复静态资源问题
-echo "🔧 修复静态资源问题..."
-if [ ! -d ".next/standalone/.next/static" ] && [ -d ".next/static" ]; then
-    echo "📝 复制静态资源..."
-    mkdir -p .next/standalone/.next/static
-    cp -r .next/static/* .next/standalone/.next/static/
-    echo "✅ 静态资源已复制"
-else
-    echo "✅ 静态资源已存在"
-fi
-
 # 复制public目录
 if [ -d "public" ] && [ ! -d ".next/standalone/public" ]; then
     echo "📝 复制public目录..."
@@ -224,39 +217,17 @@ echo "🛑 停止现有进程..."
 pm2 delete my-next 2>/dev/null || echo "✅ 无现有my-next进程"
 pm2 delete prisma-studio 2>/dev/null || echo "✅ 无现有prisma-studio进程"
 
-# 启动应用
-echo "🚀 启动应用..."
-pm2 start ecosystem.config.js
-pm2 save
+# 重启应用
+restart_application
 
 # 等待应用启动
-echo "⏳ 等待应用启动..."
-sleep 5
+wait_for_app
 
-# 检查应用状态
-echo "🔍 检查应用状态..."
-if pm2 list | grep -q "my-next.*online"; then
-    echo "✅ Next.js应用启动成功"
-else
-    echo "❌ Next.js应用启动失败"
-    echo "📝 查看错误日志:"
-    pm2 logs my-next --lines 20
-    exit 1
-fi
+# 测试应用访问
+test_app_access
 
-# 检查端口是否可访问
-echo "🔍 检查端口可访问性..."
-if curl -s http://localhost:3000 > /dev/null; then
-    echo "✅ 本地3000端口可访问"
-else
-    echo "❌ 本地3000端口无法访问"
-    echo "📝 查看应用日志:"
-    pm2 logs my-next --lines 10
-fi
-
-# 配置PM2开机自启
-echo "🔧 配置PM2开机自启..."
-pm2 startup 2>/dev/null || echo "⚠️  PM2开机自启配置失败，请手动运行: pm2 startup"
+# 显示完成信息
+show_completion_message
 
 echo ""
 echo "🎉 部署完成！"

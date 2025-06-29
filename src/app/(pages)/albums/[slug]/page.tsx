@@ -90,7 +90,7 @@ export default async function AlbumPage({ params }: AlbumPageProps) {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <AlbumDetail album={albumWithImageUrl} onClose={() => {}} />
+      <AlbumDetail album={albumWithImageUrl} />
     </div>
   );
 } 

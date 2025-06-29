@@ -131,25 +131,22 @@ export default async function PhotoPage({ params }: PhotoPageProps) {
     settings: photo.settings,
     postPhotos: photo.postPhotos.map(postPhoto => ({
       id: postPhoto.id,
-      post: {
-        id: postPhoto.post.id,
-        title: postPhoto.post.title,
-        slug: postPhoto.post.slug,
-        excerpt: postPhoto.post.excerpt,
-        coverImage: postPhoto.post.coverImage,
-        author: {
-          id: postPhoto.post.author.id,
-          username: postPhoto.post.author.username,
-          displayName: postPhoto.post.author.displayName || postPhoto.post.author.username,
-          avatar: postPhoto.post.author.avatar,
-        },
+      title: postPhoto.post.title,
+      slug: postPhoto.post.slug,
+      excerpt: postPhoto.post.excerpt,
+      coverImage: postPhoto.post.coverImage,
+      author: {
+        id: postPhoto.post.author.id,
+        username: postPhoto.post.author.username,
+        displayName: postPhoto.post.author.displayName || postPhoto.post.author.username,
+        avatar: postPhoto.post.author.avatar,
       },
     })),
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <PhotoDetail photo={transformedPhoto} onClose={() => {}} />
+      <PhotoDetail photo={transformedPhoto} />
     </div>
   );
 } 
