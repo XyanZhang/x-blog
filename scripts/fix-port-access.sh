@@ -27,10 +27,24 @@ fi
 
 # 检查pnpm
 if ! command -v pnpm &> /dev/null; then
-    echo "❌ pnpm 未安装"
-    echo "📦 正在安装pnpm..."
-    npm install -g pnpm
-    echo "✅ pnpm 安装完成"
+    # 尝试其他可能的pnpm路径
+    if [ -f "$HOME/.nvm/versions/node/$(node --version)/bin/pnpm" ]; then
+        echo "✅ pnpm 已安装 (通过nvm): $HOME/.nvm/versions/node/$(node --version)/bin/pnpm"
+        # 创建软链接到PATH
+        sudo ln -sf "$HOME/.nvm/versions/node/$(node --version)/bin/pnpm" /usr/local/bin/pnpm
+        echo "✅ 已创建pnpm软链接"
+    elif [ -f "$HOME/.local/share/pnpm/pnpm" ]; then
+        echo "✅ pnpm 已安装 (本地安装): $HOME/.local/share/pnpm/pnpm"
+        # 添加到PATH
+        export PATH="$HOME/.local/share/pnpm:$PATH"
+    elif [ -f "/usr/local/bin/pnpm" ]; then
+        echo "✅ pnpm 已安装 (全局安装): /usr/local/bin/pnpm"
+    else
+        echo "❌ pnpm 未安装"
+        echo "📦 正在安装pnpm..."
+        npm install -g pnpm
+        echo "✅ pnpm 安装完成"
+    fi
 else
     echo "✅ pnpm 已安装: $(pnpm --version)"
 fi
