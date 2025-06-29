@@ -82,7 +82,8 @@ pnpm db:push
 # 启动应用
 echo "🚀 启动应用..."
 pm2 delete my-next 2>/dev/null || true
-pm2 start npm --name "my-next" -- start
+pm2 delete prisma-studio 2>/dev/null || true
+pm2 start ecosystem.config.js
 pm2 save
 
 # 配置PM2开机自启
@@ -93,14 +94,19 @@ echo "🎉 部署完成！"
 echo "📊 查看应用状态: pm2 status"
 echo "📝 查看日志: pm2 logs my-next"
 echo "🌐 应用访问地址: http://$SERVER_IP:3000"
+echo "🗄️  Prisma Studio 地址: http://$SERVER_IP:5555"
 echo ""
 echo "🔧 常用命令:"
 echo "   重启应用: pm2 restart my-next"
+echo "   重启 Prisma Studio: pm2 restart prisma-studio"
 echo "   停止应用: pm2 stop my-next"
+echo "   停止 Prisma Studio: pm2 stop prisma-studio"
 echo "   查看状态: pm2 status"
 echo "   查看日志: pm2 logs my-next"
+echo "   查看 Prisma Studio 日志: pm2 logs prisma-studio"
 echo ""
 echo "⚠️  注意事项:"
-echo "   1. 确保服务器防火墙开放了3000端口"
-echo "   2. 如果使用云服务器，请在安全组中开放3000端口"
-echo "   3. 如需通过80端口访问，请配置Nginx反向代理" 
+echo "   1. 确保服务器防火墙开放了3000和5555端口"
+echo "   2. 如果使用云服务器，请在安全组中开放3000和5555端口"
+echo "   3. Prisma Studio 仅用于开发/管理，生产环境建议关闭"
+echo "   4. 如需通过80端口访问，请配置Nginx反向代理" 
