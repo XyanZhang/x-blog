@@ -16,29 +16,60 @@ if ! command -v node &> /dev/null; then
     echo "❌ Node.js 未安装，正在安装..."
     curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
     sudo apt-get install -y nodejs
+    echo "✅ Node.js 安装完成"
+else
+    echo "✅ Node.js 已安装: $(node --version)"
 fi
 
 # 检查 pnpm
 if ! command -v pnpm &> /dev/null; then
-    echo "📦 安装 pnpm..."
+    echo "📦 pnpm 未安装，正在安装..."
     npm install -g pnpm
+    echo "✅ pnpm 安装完成"
+else
+    echo "✅ pnpm 已安装: $(pnpm --version)"
 fi
 
 # 检查 PM2
 if ! command -v pm2 &> /dev/null; then
-    echo "⚡ 安装 PM2..."
+    echo "⚡ PM2 未安装，正在安装..."
     npm install -g pm2
+    echo "✅ PM2 安装完成"
+else
+    echo "✅ PM2 已安装: $(pm2 --version | head -n1)"
 fi
 
 # 配置防火墙
 echo "🔥 配置防火墙..."
 if command -v ufw &> /dev/null; then
-    sudo ufw allow 3000/tcp
-    sudo ufw allow 5555/tcp
+    # 检查端口是否已经开放
+    if ! sudo ufw status | grep -q "3000/tcp"; then
+        sudo ufw allow 3000/tcp
+        echo "✅ 已开放3000端口"
+    else
+        echo "✅ 3000端口已开放"
+    fi
+    if ! sudo ufw status | grep -q "5555/tcp"; then
+        sudo ufw allow 5555/tcp
+        echo "✅ 已开放5555端口"
+    else
+        echo "✅ 5555端口已开放"
+    fi
     echo "✅ UFW防火墙已配置"
 elif command -v iptables &> /dev/null; then
-    sudo iptables -A INPUT -p tcp --dport 3000 -j ACCEPT
-    sudo iptables -A INPUT -p tcp --dport 5555 -j ACCEPT
+    # 检查iptables规则是否已存在
+    if ! sudo iptables -L -n | grep -q "3000"; then
+        sudo iptables -A INPUT -p tcp --dport 3000 -j ACCEPT
+        echo "✅ 已添加3000端口规则"
+    else
+        echo "✅ 3000端口规则已存在"
+    fi
+    if ! sudo iptables -L -n | grep -q "5555"; then
+        sudo iptables -A INPUT -p tcp --dport 5555 -j ACCEPT
+        echo "✅ 已添加5555端口规则"
+    else
+        echo "✅ 5555端口规则已存在"
+    fi
     echo "✅ iptables防火墙已配置"
 else
     echo "⚠️  未检测到防火墙，请手动确保3000和5555端口开放"
@@ -46,9 +77,15 @@ fi
 
 # 创建应用目录
 APP_DIR="/var/www/x-blog"
-echo "📁 创建应用目录: $APP_DIR"
-sudo mkdir -p $APP_DIR
-sudo chown $USER:$USER $APP_DIR
+echo "📁 检查应用目录: $APP_DIR"
+if [ ! -d "$APP_DIR" ]; then
+    echo "📁 创建应用目录..."
+    sudo mkdir -p $APP_DIR
+    sudo chown $USER:$USER $APP_DIR
+    echo "✅ 应用目录已创建"
+else
+    echo "✅ 应用目录已存在"
+fi
 
 # 进入应用目录
 cd $APP_DIR
@@ -57,6 +94,7 @@ cd $APP_DIR
 if [ -d ".git" ]; then
     echo "📥 拉取最新代码..."
     git pull origin main
+    echo "✅ 代码已更新"
 else
     echo "📥 克隆项目代码..."
     # 请替换为你的实际Git仓库地址
@@ -65,17 +103,31 @@ else
     exit 1
 fi
 
-# 安装依赖
-echo "📦 安装项目依赖..."
-pnpm install
+# 检查并安装依赖
+echo "📦 检查项目依赖..."
+if [ ! -d "node_modules" ] || [ ! -f "pnpm-lock.yaml" ]; then
+    echo "📦 安装项目依赖..."
+    pnpm install
+    echo "✅ 依赖安装完成"
+else
+    echo "✅ 依赖已安装，跳过安装步骤"
+fi
 
-# 生成Prisma客户端
-echo "🔧 生成Prisma客户端..."
-pnpm prisma generate
+# 检查并生成Prisma客户端
+echo "🔧 检查Prisma客户端..."
+if [ ! -d "node_modules/@prisma/client" ]; then
+    echo "🔧 生成Prisma客户端..."
+    pnpm prisma generate
+    echo "✅ Prisma客户端已生成"
+else
+    echo "✅ Prisma客户端已存在"
+fi
 
-# 创建环境变量文件
-echo "🔧 创建环境变量文件..."
-cat > .env.local << EOF
+# 检查并创建环境变量文件
+echo "🔧 检查环境变量文件..."
+if [ ! -f ".env.local" ]; then
+    echo "🔧 创建环境变量文件..."
+    cat > .env.local << EOF
 # 数据库配置
 DATABASE_URL="file:./blog.db"
 
@@ -88,12 +140,26 @@ NODE_ENV="production"
 HOSTNAME="0.0.0.0"
 PORT="3000"
 EOF
+    echo "✅ 环境变量文件已创建: .env.local"
+else
+    echo "✅ 环境变量文件已存在"
+    # 检查是否需要更新NEXTAUTH_URL
+    if ! grep -q "NEXTAUTH_URL.*$SERVER_IP" .env.local; then
+        echo "🔄 更新NEXTAUTH_URL..."
+        sed -i "s|NEXTAUTH_URL=.*|NEXTAUTH_URL=\"http://$SERVER_IP:3000\"|" .env.local
+        echo "✅ NEXTAUTH_URL已更新"
+    fi
+fi
 
-echo "✅ 环境变量文件已创建: .env.local"
-
-# 构建项目
-echo "🔨 构建项目..."
-pnpm build
+# 检查并构建项目
+echo "🔨 检查构建文件..."
+if [ ! -f ".next/standalone/server.js" ]; then
+    echo "🔨 构建项目..."
+    pnpm build
+    echo "✅ 项目构建完成"
+else
+    echo "✅ 构建文件已存在，跳过构建步骤"
+fi
 
 # 检查standalone文件
 echo "🔍 检查standalone文件..."
@@ -109,14 +175,20 @@ fi
 echo "🔧 设置文件权限..."
 chmod +x .next/standalone/server.js
 
-# 数据库迁移
-echo "🗄️  运行数据库迁移..."
-pnpm db:push
+# 检查并创建数据库
+echo "🗄️  检查数据库..."
+if [ ! -f "prisma/blog.db" ]; then
+    echo "🗄️  创建数据库..."
+    pnpm db:push
+    echo "✅ 数据库已创建"
+else
+    echo "✅ 数据库文件已存在"
+fi
 
 # 停止现有进程
 echo "🛑 停止现有进程..."
-pm2 delete my-next 2>/dev/null || true
-pm2 delete prisma-studio 2>/dev/null || true
+pm2 delete my-next 2>/dev/null || echo "✅ 无现有my-next进程"
+pm2 delete prisma-studio 2>/dev/null || echo "✅ 无现有prisma-studio进程"
 
 # 启动应用
 echo "🚀 启动应用..."
@@ -149,6 +221,7 @@ else
 fi
 
 # 配置PM2开机自启
+echo "🔧 配置PM2开机自启..."
 pm2 startup 2>/dev/null || echo "⚠️  PM2开机自启配置失败，请手动运行: pm2 startup"
 
 echo ""
