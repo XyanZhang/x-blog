@@ -69,6 +69,10 @@ fi
 echo "📦 安装项目依赖..."
 pnpm install
 
+# 生成Prisma客户端
+echo "🔧 生成Prisma客户端..."
+pnpm prisma generate
+
 # 创建环境变量文件
 echo "🔧 创建环境变量文件..."
 cat > .env.local << EOF
@@ -90,6 +94,20 @@ echo "✅ 环境变量文件已创建: .env.local"
 # 构建项目
 echo "🔨 构建项目..."
 pnpm build
+
+# 检查standalone文件
+echo "🔍 检查standalone文件..."
+if [ ! -f ".next/standalone/server.js" ]; then
+    echo "❌ 未找到server.js文件，构建可能失败"
+    echo "📝 检查构建日志..."
+    exit 1
+else
+    echo "✅ 找到server.js文件: .next/standalone/server.js"
+fi
+
+# 设置文件权限
+echo "🔧 设置文件权限..."
+chmod +x .next/standalone/server.js
 
 # 数据库迁移
 echo "🗄️  运行数据库迁移..."
