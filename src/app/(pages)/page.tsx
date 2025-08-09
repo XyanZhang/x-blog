@@ -53,14 +53,8 @@ const HomePage: FC = async () => {
           <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight">
             <TypewriterText 
               texts={[
-                '分享技术，记录生活',
-                '探索编程的无限可能',
-                '用代码构建美好世界',
                 '技术改变生活',
                 '学习永无止境',
-                '创造价值，传递知识',
-                '拥抱开源，共同成长',
-                '代码如诗，逻辑如画',
                 '工具提升效率',
                 '终端里的无限宇宙',
                 '享受创造的乐趣',
@@ -118,7 +112,7 @@ const HomePage: FC = async () => {
                 <div className="md:flex">
                   <div className="md:w-1/2 relative">
                     {featuredPost.coverImage ? (
-                      <div className="h-64 md:h-full relative overflow-hidden">
+                      <div className="h-64 relative overflow-hidden">
                         <img 
                           src={featuredPost.coverImage} 
                           alt={featuredPost.title}
@@ -135,7 +129,7 @@ const HomePage: FC = async () => {
                       </div>
                     ) : (
                       <div 
-                        className="h-64 md:h-full flex items-center justify-center text-white relative overflow-hidden"
+                        className="h-64 flex items-center justify-center text-white relative overflow-hidden"
                         style={{ backgroundColor: featuredPost.category.color || '#6b7280' }}
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent"></div>
