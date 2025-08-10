@@ -86,3 +86,8 @@ export function formatDateTime(date: Date | string | number): string {
     minute: '2-digit'
   })
 }
+
+// 合并CSS类名
+export function cn(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(' ')
+}

@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 import UserNav from '@/components/auth/user-nav';
 import { NavLink } from './nav-link';
+import { SearchBar } from '@/components/search/search-bar';
 
 export const Header: FC = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -38,8 +39,13 @@ export const Header: FC = () => {
                         </nav>
                     </div>
 
-                    {/* 右侧：移动端菜单按钮和用户导航 */}
+                    {/* 右侧：搜索栏、用户导航和移动端菜单按钮 */}
                     <div className="flex items-center space-x-4">
+                        {/* 搜索栏 */}
+                        <div className="hidden md:block w-64">
+                            <SearchBar placeholder="搜索..." />
+                        </div>
+                        
                         {/* 用户导航 */}
                         <UserNav />
                         
@@ -80,6 +86,11 @@ export const Header: FC = () => {
             {/* 移动端导航菜单 */}
             <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} border-t border-gray-200`}>
                 <div className="px-4 py-3 space-y-1">
+                    {/* 移动端搜索栏 */}
+                    <div className="mb-4">
+                        <SearchBar placeholder="搜索..." />
+                    </div>
+                    
                     <NavLink 
                         href="/" 
                         className="block"
