@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { ChevronDown, ChevronRight } from 'lucide-react'
+import { ChevronDown, ChevronRight, List } from 'lucide-react'
 
 interface TocItem {
   id: string
@@ -73,13 +73,19 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
 
   // 点击跳转到对应标题
   const scrollToHeading = (id: string) => {
+    console.log('TableOfContents: 尝试跳转到标题:', id)
     const element = document.getElementById(id)
     if (element) {
+      console.log('TableOfContents: 找到元素:', element)
       const top = element.getBoundingClientRect().top + window.scrollY - 80
+      console.log('TableOfContents: 滚动到位置:', top)
       window.scrollTo({
         top,
         behavior: 'smooth'
       })
+    } else {
+      console.log('TableOfContents: 未找到元素:', id)
+      console.log('TableOfContents: 当前页面所有标题:', document.querySelectorAll('h1, h2, h3, h4, h5, h6'))
     }
   }
 
@@ -88,12 +94,19 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
   }
 
   return (
-    <div className={`bg-white rounded-lg shadow-sm p-6 ${className}`}>
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">文章目录</h3>
+    <div className={`bg-white rounded-lg shadow-sm border border-gray-100 ${className}`}>
+      <div className="flex items-center justify-between p-4 border-b border-gray-100">
+        <div className="flex items-center gap-2">
+          <List className="h-5 w-5 text-blue-600" />
+          <h3 className="text-lg font-semibold text-gray-900">文章目录</h3>
+          <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+            {tocItems.length}
+          </span>
+        </div>
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1 hover:bg-gray-100 rounded transition-colors"
+          className="p-2 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-105"
+          title={isCollapsed ? '展开目录' : '折叠目录'}
         >
           {isCollapsed ? (
             <ChevronRight className="h-4 w-4 text-gray-500" />
@@ -104,27 +117,30 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
       </div>
       
       {!isCollapsed && (
-        <nav className="space-y-1 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+        <nav className="p-4 space-y-1 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           {tocItems.map((item, index) => (
             <button
               key={index}
-              onClick={() => scrollToHeading(item.id)}
+              onClick={() => {
+                console.log('TableOfContents: 按钮被点击:', item.title, 'ID:', item.id)
+                scrollToHeading(item.id)
+              }}
               className={`
-                block w-full text-left text-sm transition-colors rounded px-2 py-1
-                ${item.level === 1 ? 'font-medium' : ''}
-                ${item.level === 2 ? 'ml-3' : ''}
-                ${item.level === 3 ? 'ml-6' : ''}
-                ${item.level === 4 ? 'ml-9' : ''}
-                ${item.level === 5 ? 'ml-12' : ''}
-                ${item.level === 6 ? 'ml-15' : ''}
+                block w-full text-left text-sm transition-all duration-200 rounded-lg px-3 py-2 cursor-pointer
+                ${item.level === 1 ? 'font-semibold text-gray-900' : 'text-gray-700'}
+                ${item.level === 2 ? 'ml-4 font-medium' : ''}
+                ${item.level === 3 ? 'ml-8 text-gray-600' : ''}
+                ${item.level === 4 ? 'ml-12 text-gray-500' : ''}
+                ${item.level === 5 ? 'ml-16 text-gray-500' : ''}
+                ${item.level === 6 ? 'ml-20 text-gray-500' : ''}
                 ${activeId === item.id 
-                  ? 'text-blue-600 bg-blue-50 font-medium' 
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  ? 'text-blue-600 bg-blue-50 border-l-4 border-l-blue-600 font-medium shadow-sm' 
+                  : 'hover:text-gray-900 hover:bg-gray-50 hover:shadow-sm'
                 }
               `}
               title={item.title}
             >
-              <span className="line-clamp-2">
+              <span className="line-clamp-2 leading-relaxed">
                 {item.title}
               </span>
             </button>

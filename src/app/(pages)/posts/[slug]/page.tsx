@@ -8,6 +8,7 @@ import { getPostBySlug, getRelatedPosts, incrementPostViews } from '@/lib/db'
 import type { PostDetail } from '@/types/blog'
 import MarkdownRenderer from '@/components/MarkdownRenderer'
 import TableOfContents from '@/components/TableOfContents'
+import AdvancedReadingProgressBar from '@/components/AdvancedReadingProgressBar'
 import GiscusComments from '@/components/comments/giscus-comments'
 
 interface PostDetailPageProps {
@@ -113,9 +114,12 @@ const PostDetailPage: FC<PostDetailPageProps> = async ({ params }) => {
 
   return (
     <article className="min-h-screen bg-gray-50">
+      {/* 增强版阅读进度条和目录 */}
+      <AdvancedReadingProgressBar content={post.content} />
+      
       {/* 返回链接 */}
       <div className="bg-white border-b">
-        <div className="max-w-4xl mx-auto px-4 py-4">
+        <div className="max-w-6xl mx-auto px-4 py-4">
           <Link 
             href="/" 
             className="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors"
@@ -128,7 +132,7 @@ const PostDetailPage: FC<PostDetailPageProps> = async ({ params }) => {
 
       {/* 文章头部 */}
       <header className="bg-white border-b">
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-8">
           {/* 分类标签 */}
           {post.category && (
             <div className="mb-4">
@@ -246,119 +250,213 @@ const PostDetailPage: FC<PostDetailPageProps> = async ({ params }) => {
       </header>
 
       <div className="relative">
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          {/* 主要内容 - 占据完整宽度 */}
-          <main>
-            {/* 封面图片 */}
-            {post.coverImage && (
-              <div className="mb-8">
-                <img 
-                  src={post.coverImage} 
-                  alt={post.title}
-                  className="w-full h-64 object-cover rounded-lg shadow-md"
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          {/* 主要内容区域 */}
+          <div className="flex gap-8">
+            {/* 文章内容 - 占据左侧主要空间 */}
+            <main className="flex-1 max-w-4xl">
+              {/* 封面图片 */}
+              {post.coverImage && (
+                <div className="mb-8">
+                  <img 
+                    src={post.coverImage} 
+                    alt={post.title}
+                    className="w-full h-64 object-cover rounded-lg shadow-md"
+                  />
+                </div>
+              )}
+
+              {/* 移动端目录 - 在文章内容之前显示 */}
+              <div className="xl:hidden mb-6">
+                <TableOfContents content={post.content} />
+              </div>
+
+              {/* 文章内容 */}
+              <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
+                <MarkdownRenderer 
+                  content={post.content}
+                  className="prose prose-lg max-w-none"
                 />
               </div>
-            )}
 
-            {/* 文章内容 */}
-            <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
-              <MarkdownRenderer 
-                content={post.content}
-                className="prose prose-lg max-w-none"
-              />
-            </div>
+              {/* 标签 */}
+              {post.tags.length > 0 && (
+                <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">标签</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.map(({ tag }) => (
+                      <Link
+                        key={tag.id}
+                        href={`/tags/${tag.slug}`}
+                        className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors"
+                        style={{ backgroundColor: tag.color ? `${tag.color}20` : undefined }}
+                      >
+                        #{tag.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-            {/* 标签 */}
-            {post.tags.length > 0 && (
+              {/* 操作按钮 */}
               <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">标签</h3>
-                <div className="flex flex-wrap gap-2">
-                  {post.tags.map(({ tag }) => (
-                    <Link
-                      key={tag.id}
-                      href={`/tags/${tag.slug}`}
-                      className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors"
-                      style={{ backgroundColor: tag.color ? `${tag.color}20` : undefined }}
-                    >
-                      #{tag.name}
-                    </Link>
-                  ))}
+                <div className="flex items-center justify-center gap-4">
+                  <button className="flex items-center gap-2 px-6 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
+                    <Heart className="h-5 w-5" />
+                    点赞 ({post._count.likes})
+                  </button>
+                  <button className="flex items-center gap-2 px-6 py-3 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition-colors">
+                    <Bookmark className="h-5 w-5" />
+                    收藏 ({post._count.bookmarks})
+                  </button>
+                  <button className="flex items-center gap-2 px-6 py-3 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
+                    <Share2 className="h-5 w-5" />
+                    分享
+                  </button>
                 </div>
               </div>
-            )}
 
-            {/* 操作按钮 */}
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-              <div className="flex items-center justify-center gap-4">
-                <button className="flex items-center gap-2 px-6 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
-                  <Heart className="h-5 w-5" />
-                  点赞 ({post._count.likes})
-                </button>
-                <button className="flex items-center gap-2 px-6 py-3 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition-colors">
-                  <Bookmark className="h-5 w-5" />
-                  收藏 ({post._count.bookmarks})
-                </button>
-                <button className="flex items-center gap-2 px-6 py-3 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
-                  <Share2 className="h-5 w-5" />
-                  分享
-                </button>
-              </div>
-            </div>
-
-            {/* Giscus 评论区域 */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <GiscusComments slug={post.slug} title={post.title} />
-            </div>
-          </main>
-        </div>
-
-        {/* 侧边栏 - 位于容器外部右侧，sticky定位 */}
-        <aside className="hidden xl:block fixed right-4 top-20 w-72 max-h-[calc(100vh-5rem)] overflow-y-auto">
-          <div className="space-y-6">
-            {/* 相关文章 */}
-            {relatedPosts.length > 0 && (
+              {/* Giscus 评论区域 */}
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">相关文章</h3>
-                <div className="space-y-4">
-                  {relatedPosts.map((relatedPost) => (
-                    <Link
-                      key={relatedPost.id}
-                      href={`/posts/${relatedPost.slug}`}
-                      className="block group"
-                    >
-                      <div className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all">
-                        <h4 className="font-medium text-gray-900 group-hover:text-blue-600 mb-2 line-clamp-2">
-                          {relatedPost.title}
-                        </h4>
-                        {relatedPost.excerpt && (
-                          <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                            {relatedPost.excerpt}
-                          </p>
-                        )}
-                        <div className="flex items-center justify-between text-xs text-gray-500">
-                          <span>{formatDate(relatedPost.createdAt)}</span>
-                          <div className="flex items-center gap-3">
-                            <span className="flex items-center gap-1">
-                              <Eye className="h-3 w-3" />
-                              {relatedPost.viewCount}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Heart className="h-3 w-3" />
-                              {relatedPost._count.likes}
-                            </span>
+                <GiscusComments slug={post.slug} title={post.title} />
+              </div>
+            </main>
+
+            {/* 侧边栏 - 使用sticky定位，更好的布局控制 */}
+            <aside className="hidden xl:block w-80 flex-shrink-0">
+              <div className="sticky top-20 space-y-4 max-h-[calc(100vh-5rem)] overflow-y-auto pr-2">
+                {/* 文章目录 */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                  <div className="px-3 py-3 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+                    <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+                      <Bookmark className="h-4 w-4 text-blue-600" />
+                      文章目录
+                    </h3>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto">
+                    <TableOfContents content={post.content} className="border-0 shadow-none" />
+                  </div>
+                </div>
+
+                {/* 相关文章 */}
+                {relatedPosts.length > 0 && (
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div className="px-3 py-3 border-b border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50">
+                      <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+                        <MessageCircle className="h-4 w-4 text-green-600" />
+                        相关推荐
+                      </h3>
+                    </div>
+                    <div className="p-3 space-y-3">
+                      {relatedPosts.map((relatedPost) => (
+                        <Link
+                          key={relatedPost.id}
+                          href={`/posts/${relatedPost.slug}`}
+                          className="block group"
+                        >
+                          <div className="border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-md transition-all duration-200">
+                            <h4 className="font-medium text-gray-900 group-hover:text-blue-600 mb-2 line-clamp-2 leading-relaxed text-sm">
+                              {relatedPost.title}
+                            </h4>
+                            {relatedPost.excerpt && (
+                              <p className="text-xs text-gray-600 line-clamp-2 mb-2 leading-relaxed">
+                                {relatedPost.excerpt}
+                              </p>
+                            )}
+                            <div className="flex items-center justify-between text-xs text-gray-500">
+                              <span className="flex items-center gap-1">
+                                <Calendar className="h-3 w-3" />
+                                {formatDate(relatedPost.createdAt)}
+                              </span>
+                              <div className="flex items-center gap-3">
+                                <span className="flex items-center gap-1">
+                                  <Eye className="h-3 w-3" />
+                                  {relatedPost.viewCount}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Heart className="h-3 w-3" />
+                                  {relatedPost._count.likes}
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                        </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 作者信息卡片 */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                  <div className="px-3 py-3 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
+                    <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+                      <User className="h-4 w-4 text-purple-600" />
+                      关于作者
+                    </h3>
+                  </div>
+                  <div className="p-3">
+                    <div className="flex items-center mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-3 flex-shrink-0">
+                        {post.author.avatar ? (
+                          <img 
+                            src={post.author.avatar} 
+                            alt={post.author.displayName || '作者'} 
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                        ) : (
+                          <User className="h-5 w-5" />
+                        )}
                       </div>
-                    </Link>
-                  ))}
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-gray-900 text-sm">
+                          {post.author.displayName || '匿名作者'}
+                        </p>
+                        {post.author.bio && (
+                          <p className="text-xs text-gray-500 line-clamp-2">{post.author.bio}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {post.author.website && (
+                        <a 
+                          href={post.author.website} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                          title="个人网站"
+                        >
+                          <Globe className="h-4 w-4" />
+                        </a>
+                      )}
+                      {post.author.github && (
+                        <a 
+                          href={`https://github.com/${post.author.github}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
+                          title="GitHub"
+                        >
+                          <Github className="h-4 w-4" />
+                        </a>
+                      )}
+                      {post.author.twitter && (
+                        <a 
+                          href={`https://twitter.com/${post.author.twitter}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-50 rounded-lg transition-all"
+                          title="Twitter"
+                        >
+                          <Twitter className="h-4 w-4" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-            )}
-
-            {/* 目录 */}
-            <TableOfContents content={post.content} />
+            </aside>
           </div>
-        </aside>
+        </div>
       </div>
     </article>
   )

@@ -1,181 +1,173 @@
-# 阅读进度条功能说明
+# 文章目录（TOC）自动生成功能
 
-## 概述
+## 功能概述
 
-本项目已集成阅读进度条功能，可以在页面滚动时显示当前阅读进度。进度条固定在页面顶部，提供直观的阅读进度反馈。
+本项目实现了完整的文章目录自动生成功能，包括：
 
-## 功能特性
-
-- 🎯 **实时进度显示** - 根据页面滚动位置实时更新进度
-- 🎨 **多种样式选项** - 支持细、中、粗三种粗细
-- ✨ **发光效果** - 可选的发光和渐变效果
-- 📊 **百分比显示** - 可选的进度百分比显示
-- 🌈 **主题适配** - 自动适配明暗主题
-- 📱 **响应式设计** - 在各种设备上都能正常工作
-- 🔝 **智能定位** - 自动位于header下方，避免被遮挡
-
-## 位置说明
-
-### 进度条位置
-- 进度条固定在页面顶部，位于header下方
-- 使用CSS变量 `--header-height` 自动适应header高度
-- 不会被顶部导航栏遮挡
-- 支持响应式布局，在不同屏幕尺寸下都能正确显示
-
-### 技术实现
-```css
-/* 在 globals.css 中定义header高度 */
-:root {
-  --header-height: 64px;
-}
-
-/* 进度条使用CSS变量定位 */
-.progress-bar {
-  top: var(--header-height);
-}
-```
+- 📚 **自动目录生成** - 从Markdown内容中自动提取标题结构
+- 📱 **响应式设计** - 桌面端侧边栏 + 移动端抽屉式目录
+- 🎯 **智能高亮** - 滚动时自动高亮当前阅读位置的标题
+- 🚀 **平滑跳转** - 点击目录项平滑滚动到对应标题
+- 📊 **阅读进度** - 顶部进度条显示阅读进度
+- 🔝 **回到顶部** - 智能显示回到顶部按钮
 
 ## 组件说明
 
-### 基础进度条 (ReadingProgressBar)
+### 1. TableOfContents 组件
 
-简单的进度条组件，适合基本使用场景。
+基础的目录组件，用于侧边栏显示。
 
+**特性：**
+- 支持6级标题（h1-h6）
+- 自动生成锚点ID
+- 滚动监听和高亮
+- 折叠/展开功能
+- 标题数量显示
+
+**使用方法：**
 ```tsx
-import ReadingProgressBar from '@/components/ReadingProgressBar';
+import TableOfContents from '@/components/TableOfContents'
 
-<ReadingProgressBar 
-  variant="medium"
-  showGlow={true}
-  useGradient={true}
-/>
+<TableOfContents content={post.content} />
 ```
 
-### 高级进度条 (AdvancedReadingProgressBar)
+### 2. AdvancedReadingProgressBar 组件
 
-功能更丰富的进度条组件，支持更多配置选项。
+增强版组件，包含进度条和浮动目录按钮。
 
+**特性：**
+- 顶部阅读进度条
+- 右下角浮动目录按钮
+- 移动端抽屉式目录
+- 回到顶部按钮
+- 完整的目录功能
+
+**使用方法：**
 ```tsx
-import AdvancedReadingProgressBar from '@/components/AdvancedReadingProgressBar';
+import AdvancedReadingProgressBar from '@/components/AdvancedReadingProgressBar'
 
-<AdvancedReadingProgressBar 
-  variant="medium"
-  showPercentage={true}
-  showGlow={true}
-  useGradient={true}
-  onProgressChange={(progress) => console.log(`当前进度: ${progress}%`)}
-/>
+<AdvancedReadingProgressBar content={post.content} />
 ```
 
-## 配置选项
+## 在文章页面中的集成
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'thin' \| 'medium' \| 'thick'` | `'medium'` | 进度条粗细 |
-| `showPercentage` | `boolean` | `false` | 是否显示百分比 |
-| `showGlow` | `boolean` | `true` | 是否显示发光效果 |
-| `useGradient` | `boolean` | `true` | 是否使用渐变效果 |
-| `className` | `string` | `''` | 额外的CSS类名 |
-| `onProgressChange` | `(progress: number) => void` | `undefined` | 进度变化回调函数 |
-
-## 样式类
-
-### 进度条粗细
-- `.progress-thin` - 2px 高度
-- `.progress-medium` - 4px 高度  
-- `.progress-thick` - 6px 高度
-
-### 特效样式
-- `.reading-progress-bar` - 渐变背景
-- `.reading-progress-bar-glow` - 发光效果
-- `.progress-smooth` - 平滑过渡动画
-
-## 使用方法
-
-### 1. 全局使用（推荐）
-
-在 `src/app/layout.tsx` 中已经集成了进度条，所有页面都会自动显示：
+### 桌面端布局
 
 ```tsx
-import AdvancedReadingProgressBar from '@/components/AdvancedReadingProgressBar';
-
-const RootLayout = ({ children }) => (
-  <html>
-    <body>
-      <AdvancedReadingProgressBar 
-        variant="medium"
-        showPercentage={true}
-        showGlow={true}
-        useGradient={true}
-      />
-      {children}
-    </body>
-  </html>
-);
+<div className="relative">
+  <div className="max-w-4xl mx-auto px-4 py-8">
+    <main>
+      {/* 文章内容 */}
+      <MarkdownRenderer content={post.content} />
+    </main>
+  </div>
+  
+  {/* 侧边栏目录 */}
+  <aside className="hidden xl:block fixed right-4 top-20 w-72">
+    <TableOfContents content={post.content} />
+  </aside>
+</div>
 ```
 
-### 2. 页面级使用
-
-在特定页面中使用进度条：
+### 移动端布局
 
 ```tsx
-import ReadingProgressBar from '@/components/ReadingProgressBar';
+{/* 移动端目录 - 在文章内容之前显示 */}
+<div className="xl:hidden mb-6">
+  <TableOfContents content={post.content} />
+</div>
 
-export default function MyPage() {
+{/* 文章内容 */}
+<MarkdownRenderer content={post.content} />
+```
+
+### 完整集成示例
+
+```tsx
+const PostDetailPage = ({ params }) => {
   return (
-    <div>
-      <ReadingProgressBar variant="thick" />
+    <article className="min-h-screen bg-gray-50">
+      {/* 增强版阅读进度条和目录 */}
+      <AdvancedReadingProgressBar content={post.content} />
+      
       {/* 页面内容 */}
-    </div>
-  );
+      <div className="relative">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <main>
+            {/* 移动端目录 */}
+            <div className="xl:hidden mb-6">
+              <TableOfContents content={post.content} />
+            </main>
+            
+            {/* 文章内容 */}
+            <MarkdownRenderer content={post.content} />
+          </main>
+        </div>
+        
+        {/* 桌面端侧边栏 */}
+        <aside className="hidden xl:block fixed right-4 top-20 w-72">
+          <TableOfContents content={post.content} />
+        </aside>
+      </div>
+    </article>
+  )
 }
 ```
 
-### 3. 自定义进度处理
+## 标题结构要求
 
-监听进度变化并执行自定义逻辑：
+目录组件会自动解析Markdown中的标题结构：
+
+```markdown
+# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题
+```
+
+**注意事项：**
+- 标题必须使用标准的Markdown语法（# + 空格 + 标题内容）
+- 标题层级建议不要超过6级
+- 标题内容会自动转换为URL友好的锚点ID
+
+## 样式定制
+
+### 自定义样式类
 
 ```tsx
-import AdvancedReadingProgressBar from '@/components/AdvancedReadingProgressBar';
+<TableOfContents 
+  content={post.content} 
+  className="custom-toc-styles" 
+/>
+```
 
-export default function MyPage() {
-  const handleProgressChange = (progress: number) => {
-    if (progress > 50) {
-      console.log('已阅读过半！');
-    }
-    if (progress === 100) {
-      console.log('阅读完成！');
-    }
-  };
+### CSS变量
 
-  return (
-    <div>
-      <AdvancedReadingProgressBar 
-        onProgressChange={handleProgressChange}
-        showPercentage={true}
-      />
-      {/* 页面内容 */}
-    </div>
-  );
+可以通过CSS变量自定义颜色：
+
+```css
+:root {
+  --toc-active-color: #3b82f6;
+  --toc-hover-color: #f3f4f6;
+  --toc-border-color: #e5e7eb;
 }
 ```
 
-## 测试页面
+## 性能优化
 
-访问 `/test-progress-bar` 页面可以：
-- 实时预览不同的进度条配置
-- 测试各种样式选项
-- 查看进度条在不同设置下的效果
-- 验证进度条位置是否正确（不被header遮挡）
+### 滚动事件优化
 
-## 技术实现
+- 使用 `passive: true` 优化滚动事件
+- 节流处理滚动事件，避免过度触发
+- 滚动监听在组件卸载时自动清理
 
-- 使用 `useEffect` 和 `useState` 管理状态
-- 监听 `scroll` 和 `resize` 事件
-- 使用 CSS 变量适配主题色彩和header高度
-- 支持服务端渲染 (SSR)
-- 使用 Tailwind CSS 进行样式设计
-- 智能定位，避免被header遮挡
+### 内存管理
+
+- 标题解析结果缓存
+- 事件监听器正确清理
+- 避免内存泄漏
 
 ## 浏览器兼容性
 
@@ -184,65 +176,42 @@ export default function MyPage() {
 - ✅ Safari 12+
 - ✅ Edge 79+
 
-## 性能优化
+## 测试页面
 
-- 使用 `passive: true` 优化滚动事件监听
-- 防抖处理避免过度频繁的更新
-- 使用 CSS 硬件加速提升动画性能
-- 支持 `backdrop-filter` 的现代浏览器
-- 使用CSS变量减少JavaScript计算
+访问 `/test-progress-bar` 页面可以测试完整的目录功能：
 
-## 自定义样式
-
-可以通过修改 `src/app/globals.css` 中的样式类来自定义进度条外观：
-
-```css
-.reading-progress-bar {
-  background: linear-gradient(90deg, #your-color-1, #your-color-2);
-}
-
-.reading-progress-bar-glow {
-  box-shadow: 0 0 20px rgba(your-color, 0.5);
-}
-
-/* 调整header高度 */
-:root {
-  --header-height: 80px; /* 如果header高度变化 */
-}
-```
+- 多级标题结构
+- 滚动高亮
+- 点击跳转
+- 移动端适配
+- 进度条显示
 
 ## 故障排除
 
-### 进度条不显示
-- 检查页面是否有足够的内容产生滚动
-- 确认组件已正确导入和渲染
-- 检查浏览器控制台是否有错误
+### 常见问题
 
-### 进度条被遮挡
-- 确认CSS变量 `--header-height` 已正确定义
-- 检查header的z-index是否过高
-- 验证进度条的z-index设置
+1. **目录不显示**
+   - 检查文章内容是否包含Markdown标题
+   - 确认标题格式正确（# + 空格 + 内容）
 
-### 进度计算不准确
-- 确认页面内容高度计算正确
-- 检查是否有动态加载的内容
-- 验证滚动事件监听器正常工作
+2. **锚点跳转不准确**
+   - 检查页面是否有固定头部
+   - 调整 `scrollToHeading` 函数中的偏移量
 
-### 样式问题
-- 检查 Tailwind CSS 是否正确配置
-- 确认 CSS 变量是否正确定义
-- 验证浏览器是否支持相关 CSS 特性
+3. **移动端目录不工作**
+   - 确认 `xl:hidden` 类名正确
+   - 检查z-index层级设置
 
-## 常见问题
+### 调试技巧
 
-### Q: 进度条被header遮挡怎么办？
-A: 进度条已自动定位在header下方，使用CSS变量 `--header-height` 确保正确位置。
+- 在浏览器控制台查看组件状态
+- 检查DOM元素是否正确生成
+- 验证事件监听器是否正常工作
 
-### Q: 如何调整进度条位置？
-A: 修改 `src/app/globals.css` 中的 `--header-height` 变量值。
+## 未来改进
 
-### Q: 进度条在移动端显示异常？
-A: 进度条已支持响应式设计，会自动适应不同屏幕尺寸。
-
-### Q: 可以同时使用多个进度条吗？
-A: 可以，但建议在全局只使用一个，避免重复显示。 
+- [ ] 添加目录搜索功能
+- [ ] 支持自定义标题样式
+- [ ] 添加目录导出功能
+- [ ] 支持多语言标题
+- [ ] 添加目录动画效果 
