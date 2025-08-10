@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 
 import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
+import AdvancedReadingProgressBar from '@/components/AdvancedReadingProgressBar';
 
 import type { FC, PropsWithChildren } from 'react';
 
@@ -46,6 +47,12 @@ export const metadata: Metadata = {
 const RootLayout: FC<PropsWithChildren> = ({ children }) => (
     <html lang="zh-CN" suppressHydrationWarning>
         <body className={inter.className} suppressHydrationWarning>
+            <AdvancedReadingProgressBar 
+              variant="medium"
+              showPercentage={true}
+              showGlow={true}
+              useGradient={true}
+            />
             <AuthProvider>
                 {children}
             </AuthProvider>

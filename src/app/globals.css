@@ -24,6 +24,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
+    --header-height: 64px;
   }
 
   .dark {
@@ -46,6 +47,7 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 94.1%;
+    --header-height: 64px;
   }
 }
 
@@ -208,4 +210,39 @@
   .animate-scroll-indicator {
     animation: scroll-indicator 2s ease-in-out infinite;
   }
+} 
+
+/* Reading Progress Bar Styles */
+.reading-progress-bar {
+  background: linear-gradient(90deg, 
+    hsl(var(--primary)) 0%, 
+    hsl(var(--primary) / 0.8) 50%, 
+    hsl(var(--primary) / 0.6) 100%
+  );
+  backdrop-filter: blur(4px);
+}
+
+.reading-progress-bar-glow {
+  box-shadow: 
+    0 0 10px hsl(var(--primary) / 0.5),
+    0 0 20px hsl(var(--primary) / 0.3),
+    0 0 30px hsl(var(--primary) / 0.1);
+}
+
+/* Smooth progress animation */
+.progress-smooth {
+  transition: width 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Progress bar variants */
+.progress-thin {
+  height: 2px;
+}
+
+.progress-medium {
+  height: 4px;
+}
+
+.progress-thick {
+  height: 6px;
 } 
